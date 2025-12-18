@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Trader Dashboard v4.5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #1a0505;
+            --accent-color: #ff4b2b;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --win-color: #00e676;
+            --loss-color: #ff1744;
+            --wd-color: #03a9f4;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            margin: 0;
+            padding: 20px 20px 100px 20px;
+            min-height: 100vh;
+        }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: -1; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .user-avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent-color); object-fit: cover; background: #333; }
+        
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: var(--glass-border); backdrop-filter: blur(15px); }
+        
+        input, select { width: 100%; padding: 12px; margin-bottom: 12px; background: rgba(0,0,0,0.6); border: 1px solid #444; border-radius: 12px; color: white; outline: none; box-sizing: border-box; font-family: 'Poppins'; }
+        
+        .btn-primary { width: 100%; padding: 15px; background: var(--accent-color); border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.3s; }
+        .btn-primary:active { transform: scale(0.98); }
+
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .stat-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; text-align: center; border: var(--glass-border); }
+
+        .nav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); border-radius: 25px; display: flex; justify-content: space-around; padding: 15px; border: var(--glass-border); z-index: 9999; }
+        .nav-btn { background: none; border: none; color: #666; font-size: 20px; cursor: pointer; transition: 0.3s; }
+        .nav-btn.active { color: var(--accent-color); transform: translateY(-5px); }
+
+        /* Savings Progress Bar */
+        .progress-container { width: 100%; background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; margin: 8px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--accent-color); transition: width 0.5s ease; }
+
+        .history-item { display: flex; justify-content: space-between; align-items: center; }
+        .del-btn { color: #555; cursor: pointer; padding: 5px 10px; transition: 0.3s; }
+        .del-btn:hover { color: var(--loss-color); }
+        .wd-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        .color-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        input[type="color"] { width: 40px; height: 40px; border: none; background: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <header>
+        <div><small style="color:#ccc;">Equity Tracker</small><h2 id="display-name" style="margin:0;">Trader Kece</h2></div>
+        <img src="" id="header-avatar" class="user-avatar">
+    </header>
+
+    <div id="home" class="section active">
+        <div class="card" id="main-balance-card" style="background: var(--accent-color); text-align: center;">
+            <small>Current Equity (Net)</small>
+            <h1 style="margin: 10px 0; font-size: 36px;">$ <span id="home-balance">0</span></h1>
+        </div>
+        
+        <div class="stat-grid">
+            <div class="stat-box"><small style="color:#ccc">MODAL AWAL</small><div id="stat-capital" style="font-weight: bold; font-size: 20px;">$0</div></div>
+            <div class="stat-box"><small style="color:#ccc">WIN RATE</small><div id="stat-wr" style="font-weight: bold; font-size: 20px; color: var(--win-color);">0%</div></div>
+        </div>
+
+        <h4 style="margin: 25px 0 10px 0;"><i class="fas fa-university" style="color:var(--wd-color)"></i> Recent Withdrawals</h4>
+        <div id="wd-summary-list" class="card"></div>
+    </div>
+
+    <div id="trading" class="section">
+        <h3>New Entry</h3>
+        <div class="card">
+            <input type="text" id="pair" placeholder="Pair (ex: BTC/USDT)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <select id="side"><option value="BUY">BUY</option><option value="SELL">SELL</option></select>
+                <select id="result"><option value="win">WIN (+)</option><option value="loss">LOSS (-)</option></select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <input type="number" id="pnl" placeholder="Amount ($)">
+                <input type="number" id="rr" placeholder="RR Ratio" step="0.1">
+            </div>
+            <button class="btn-primary" onclick="addTrade()">Submit Trade</button>
+            <button class="btn-primary" onclick="addWithdrawal()" style="background: var(--wd-color); margin-top:10px;">Withdraw Funds</button>
+        </div>
+        <div id="trade-list"></div>
+    </div>
+
+    <div id="saving" class="section">
+        <h3>Dream Goals</h3>
+        <div class="card">
+            <input type="text" id="itemName" placeholder="Nama Barang">
+            <input type="text" id="itemImage" placeholder="URL Gambar">
+            <input type="number" id="itemPrice" placeholder="Harga ($)">
+            <button class="btn-primary" onclick="addItem()">Tambah Target</button>
+        </div>
+        <div id="dream-list" style="margin-top:20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+    </div>
+
+    <div id="settings" class="section">
+        <h3>Settings & Profile</h3>
+        <div class="card" style="text-align: center;">
+            <img src="" id="preview-avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent-color); object-fit: cover;">
+            <input type="file" id="file-input" accept="image/*" onchange="previewImage(event)" style="display:none;">
+            <br>
+            <button onclick="document.getElementById('file-input').click()" style="background:none; border:1px solid var(--accent-color); color:var(--accent-color); padding:5px 15px; border-radius:8px; font-size:12px; margin: 10px 0 20px 0; cursor:pointer;">Change Photo</button>
+            
+            <input type="text" id="input-name" placeholder="Nama User">
+            <input type="number" id="input-capital" placeholder="Modal Awal ($)">
+            
+            <hr style="border: 0.5px solid #444; margin: 20px 0;">
+            
+            <div class="color-row"><small>Accent Color</small><input type="color" id="color-accent" onchange="updateTheme()"></div>
+            <div class="color-row"><small>Background Color</small><input type="color" id="color-bg" onchange="updateTheme()"></div>
+            <input type="text" id="input-bg-url" placeholder="Paste Wallpaper URL" onchange="updateTheme()">
+            
+            <button class="btn-primary" onclick="saveProfile()" style="margin-top: 15px;">Save All Changes</button>
+            <button onclick="clearAllData()" style="background:none; border:none; color:var(--loss-color); font-size:12px; margin-top:20px; cursor:pointer;">Reset All Data</button>
+        </div>
+    </div>
+
+    <nav class="nav-container">
+        <button class="nav-btn active" onclick="showTab('home', this)"><i class="fas fa-home"></i></button>
+        <button class="nav-btn" onclick="showTab('trading', this)"><i class="fas fa-chart-line"></i></button>
+        <button class="nav-btn" onclick="showTab('saving', this)"><i class="fas fa-wallet"></i></button>
+        <button class="nav-btn" onclick="showTab('settings', this)"><i class="fas fa-cog"></i></button>
+    </nav>
+
+    <script>
+        let trades = JSON.parse(localStorage.getItem('trades')) || [];
+        let items = JSON.parse(localStorage.getItem('dreamItems')) || [];
+        let withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+        let config = JSON.parse(localStorage.getItem('traderConfig')) || {
+            name: "Trader Kece",
+            capital: 0,
+            accent: "#ff4b2b",
+            bg: "#1a0505",
+            bgUrl: "",
+            profilePic: "https://ui-avatars.com/api/?name=User&background=ff4b2b&color=fff"
+        };
+
+        window.onload = function() {
+            applyTheme();
+            loadProfileFields();
+            updateUI();
+        };
+
+        function showTab(tabName, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                document.getElementById('preview-avatar').src = reader.result;
+                config.profilePic = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function updateTheme() {
+            config.accent = document.getElementById('color-accent').value;
+            config.bg = document.getElementById('color-bg').value;
+            config.bgUrl = document.getElementById('input-bg-url').value;
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const root = document.documentElement;
+            root.style.setProperty('--accent-color', config.accent);
+            root.style.setProperty('--bg-color', config.bg);
+            document.body.style.backgroundImage = config.bgUrl ? `url('${config.bgUrl}')` : 'none';
+            document.getElementById('header-avatar').src = config.profilePic;
+            document.getElementById('preview-avatar').src = config.profilePic;
+        }
+
+        function saveProfile() {
+            config.name = document.getElementById('input-name').value;
+            config.capital = parseFloat(document.getElementById('input-capital').value) || 0;
+            localStorage.setItem('traderConfig', JSON.stringify(config));
+            applyTheme();
+            updateUI();
+            alert("Updated!");
+        }
+
+        function loadProfileFields() {
+            document.getElementById('input-name').value = config.name;
+            document.getElementById('input-capital').value = config.capital;
+            document.getElementById('display-name').innerText = config.name;
+            document.getElementById('color-accent').value = config.accent;
+            document.getElementById('color-bg').value = config.bg;
+            document.getElementById('input-bg-url').value = config.bgUrl;
+        }
+
+        function addTrade() {
+            const pair = document.getElementById('pair').value;
+            const side = document.getElementById('side').value;
+            const result = document.getElementById('result').value;
+            const pnl = parseFloat(document.getElementById('pnl').value);
+            const rr = document.getElementById('rr').value || '0';
+            if(!pair || isNaN(pnl)) return alert("Isi data!");
+            trades.unshift({ id: Date.now(), pair: pair.toUpperCase(), side, result, pnl, rr, time: new Date().toLocaleDateString() });
+            localStorage.setItem('trades', JSON.stringify(trades));
+            updateUI();
+            document.getElementById('pair').value = '';
+            document.getElementById('pnl').value = '';
+        }
+
+        function deleteTrade(id) {
+            if(confirm("Hapus trade ini?")) {
+                trades = trades.filter(t => t.id !== id);
+                localStorage.setItem('trades', JSON.stringify(trades));
+                updateUI();
+            }
+        }
+
+        function addWithdrawal() {
+            const amount = parseFloat(prompt("Jumlah WD ($):"));
+            if(isNaN(amount) || amount <= 0) return;
+            withdrawals.unshift({ id: Date.now(), amount, date: new Date().toLocaleDateString() });
+            localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+            updateUI();
+        }
+
+        function deleteWD(id) {
+            if(confirm("Hapus catatan withdrawal ini?")) {
+                withdrawals = withdrawals.filter(w => w.id !== id);
+                localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            let totalProfit = 0, winCount = 0;
+            const tradeList = document.getElementById('trade-list');
+            tradeList.innerHTML = '';
+
+            trades.forEach(t => {
+                totalProfit += (t.result === 'win' ? t.pnl : -t.pnl);
+                if(t.result === 'win') winCount++;
+                tradeList.innerHTML += `
+                    <div class="card history-item" style="border-left: 4px solid ${t.result==='win'?'var(--win-color)':'var(--loss-color)'}">
+                        <div>
+                            <span class="badge" style="background:rgba(255,255,255,0.1)">${t.side}</span> <strong>${t.pair}</strong><br>
+                            <small>${t.time} | RR: ${t.rr}</small>
+                            <div style="color:${t.result==='win'?'var(--win-color)':'var(--loss-color)'}; font-weight:bold; font-size:14px;">${t.result==='win'?'+':'-'}$${t.pnl}</div>
+                        </div>
+                        <i class="fas fa-trash-alt del-btn" onclick="deleteTrade(${t.id})"></i>
+                    </div>`;
+            });
+
+            const totalWD = withdrawals.reduce((acc, curr) => acc + curr.amount, 0);
+            const currentEquity = config.capital + totalProfit - totalWD;
+
+            document.getElementById('home-balance').innerText = currentEquity.toLocaleString();
+            document.getElementById('stat-capital').innerText = "$" + config.capital.toLocaleString();
+            document.getElementById('stat-wr').innerText = (trades.length > 0 ? Math.round((winCount/trades.length)*100) : 0) + "%";
+            document.getElementById('display-name').innerText = config.name;
+
+            const wdList = document.getElementById('wd-summary-list');
+            wdList.innerHTML = withdrawals.length ? '' : '<small style="color:#666">No WD yet</small>';
+            withdrawals.slice(0,5).forEach(w => {
+                wdList.innerHTML += `
+                    <div class="wd-item">
+                        <span><i class="fas fa-minus-circle" style="color:var(--wd-color); font-size:10px;"></i> ${w.date} - <strong>$${w.amount}</strong></span>
+                        <i class="fas fa-times del-btn" style="font-size:12px;" onclick="deleteWD(${w.id})"></i>
+                    </div>`;
+            });
+            renderItems(currentEquity);
+        }
+
+        function addItem() {
+            const name = document.getElementById('itemName').value;
+            const img = document.getElementById('itemImage').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            if(!name || isNaN(price)) return alert("Isi data tabungan!");
+            items.unshift({ id: Date.now(), name, img, price });
+            localStorage.setItem('dreamItems', JSON.stringify(items));
+            updateUI(); // Memanggil updateUI untuk me-refresh progres
+            ['itemName','itemImage','itemPrice'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function deleteItem(id) {
+            if(confirm("Hapus target ini?")) {
+                items = items.filter(i => i.id !== id);
+                localStorage.setItem('dreamItems', JSON.stringify(items));
+                updateUI();
+            }
+        }
+
+        function renderItems(currentEquity) {
+            const list = document.getElementById('dream-list');
+            list.innerHTML = '';
+            items.forEach(i => {
+                const percent = Math.min(Math.max((currentEquity / i.price) * 100, 0), 100);
+                const isReady = currentEquity >= i.price;
+                const shortAmt = i.price - currentEquity;
+
+                list.innerHTML += `
+                <div class="card" style="padding:0; overflow:hidden; position:relative; border: ${isReady ? '2px solid var(--win-color)' : 'var(--glass-border)'}">
+                    <i class="fas fa-times-circle" onclick="deleteItem(${i.id})" style="position:absolute; top:5px; right:5px; color:rgba(255,255,255,0.7); cursor:pointer; z-index:10; text-shadow: 0 0 5px #000;"></i>
+                    <img src="${i.img || 'https://via.placeholder.com/150'}" style="width:100%; height:80px; object-fit:cover; opacity: ${isReady ? '1' : '0.6'}">
+                    <div style="padding:10px;">
+                        <small style="font-weight:bold; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${i.name}</small>
+                        <strong>$${i.price.toLocaleString()}</strong>
+                        
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${percent}%; background: ${isReady ? 'var(--win-color)' : 'var(--accent-color)'}"></div>
+                        </div>
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <small style="font-size:10px; color:${isReady ? 'var(--win-color)' : '#aaa'}">
+                                ${isReady ? 'READY!' : Math.floor(percent) + '%'}
+                            </small>
+                            <small style="font-size:9px; color:#888;">
+                                ${isReady ? '' : '-$' + shortAmt.toLocaleString()}
+                            </small>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function clearAllData() { if(confirm("Hapus semua data permanen?")) { localStorage.clear(); location.reload(); } }
+    </script>
+</body>
+</html>
