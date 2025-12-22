@@ -5,65 +5,36 @@
     <meta name="theme-color" content="#121212">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Trader Journal v5.1</title>
+    <title>Pro Trader Journal v5.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bg-color: #1a0505; --accent-color: #ff4b2b; --card-bg: rgba(255, 255, 255, 0.05); --glass-border: 1px solid rgba(255, 255, 255, 0.1); --win-color: #00e676; --loss-color: #ff1744; --wd-color: #03a9f4; }
-        
-        /* FIX: Tambahin padding bawah super lega biar konten gak nabrak nav */
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; margin: 0; padding: 20px 20px 160px 20px; min-height: 100vh; overflow-x: hidden; }
-        
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; margin: 0; padding: 20px 20px 120px 20px; min-height: 100vh; overflow-x: hidden; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: -2; pointer-events: none; }
-        
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; position: relative; z-index: 10; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; position: relative; z-index: 1; }
         .user-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent-color); object-fit: cover; background: #333; }
-        
-        .section { display: none; animation: fadeIn 0.4s ease; position: relative; z-index: 5; }
+        .section { display: none; animation: fadeIn 0.4s ease; position: relative; z-index: 1; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: var(--glass-border); backdrop-filter: blur(15px); }
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 12px; background: rgba(0,0,0,0.6); border: 1px solid #444; border-radius: 12px; color: white; outline: none; font-family: 'Poppins'; box-sizing: border-box; }
-        
         .btn-primary { width: 100%; padding: 15px; background: var(--accent-color); border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; }
-        
-        /* FIX TOTAL: Navigasi dibuat 'Floating' dengan Z-Index tertinggi */
-        .nav-container { 
-            position: fixed; 
-            bottom: 20px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: 90%; 
-            max-width: 400px; 
-            background: rgba(20, 20, 20, 0.95); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 25px; 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 12px; 
-            border: 1px solid rgba(255,255,255,0.15); 
-            z-index: 999999; /* Z-index dewa */
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
-            pointer-events: auto; /* Pastikan bisa disentuh */
-        }
-        
-        .nav-btn { background: none; border: none; color: #555; font-size: 22px; cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; -webkit-tap-highlight-color: transparent; transition: 0.3s; padding: 10px; }
-        .nav-btn.active { color: var(--accent-color); transform: translateY(-5px); }
-        
+        .nav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(25px); border-radius: 25px; display: flex; justify-content: space-around; padding: 15px; border: 1px solid rgba(255,255,255,0.2); z-index: 99999; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .nav-btn { background: none; border: none; color: #666; font-size: 24px; cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; -webkit-tap-highlight-color: transparent; }
+        .nav-btn.active { color: var(--accent-color); transform: translateY(-3px); transition: 0.3s; }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .stat-box { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; text-align: center; border: var(--glass-border); }
         .history-item { display: flex; justify-content: space-between; align-items: center; }
         .del-btn { color: #666; cursor: pointer; padding: 10px; font-size: 18px; }
         .progress-container { width: 100%; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; margin: 8px 0; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--accent-color); }
-        .label-small { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .label-small { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
         .wd-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .chart-container { width: 100%; height: 180px; position: relative; }
-        .ai-msg { background: rgba(3, 169, 244, 0.1); border-left: 3px solid var(--wd-color); padding: 12px; border-radius: 12px; font-size: 12px; margin-top: 10px; color: #eee; line-height: 1.5; }
-        .vault-img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid #444; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .chart-container { width: 100%; height: 200px; margin-top: 10px; }
+        .ai-msg { background: rgba(3, 169, 244, 0.1); border: 1px solid var(--wd-color); padding: 10px; border-radius: 12px; font-size: 12px; margin-top: 10px; color: #eee; line-height: 1.4; }
+        .vault-img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-top: 10px; border: 1px solid #444; }
     </style>
 </head>
 <body>
@@ -124,7 +95,7 @@
             </select>
             
             <label class="label-small">Chart Screenshot (URL):</label>
-            <input type="text" id="screenshot" placeholder="Link Gambar Chart">
+            <input type="text" id="screenshot" placeholder="Link Gambar Chart (Imgur/Postimg)">
 
             <button class="btn-primary" onclick="addTrade()">Submit Trade</button>
             <button class="btn-primary" onclick="addWithdrawal()" style="background: var(--wd-color); margin-top:10px;">Withdrawal</button>
@@ -231,7 +202,13 @@
             const emotion = document.getElementById('emotion').value;
             const ss = document.getElementById('screenshot').value;
             if(!pair || isNaN(pnl)) return;
-            trades.unshift({ id: Date.now(), pair: pair.toUpperCase(), side: document.getElementById('side').value, result: document.getElementById('result').value, pnl, rr, emotion, ss, date: new Date().toISOString() });
+            trades.unshift({ 
+                id: Date.now(), pair: pair.toUpperCase(), 
+                side: document.getElementById('side').value, 
+                result: document.getElementById('result').value, 
+                pnl, rr, emotion, ss,
+                date: new Date().toISOString() 
+            });
             localStorage.setItem('trades', JSON.stringify(trades));
             updateUI(); 
             ['pair','pnl','rr','screenshot'].forEach(id => document.getElementById(id).value = '');
@@ -248,46 +225,76 @@
 
         function updateUI() {
             let totalProfit = 0, winCount = 0, totalWinVal = 0, totalLossVal = 0;
+            let emotionStats = { FOMO: 0, Takut: 0, Marah: 0, Tenang: 0 };
             let emotionLoss = { FOMO: 0, Takut: 0, Marah: 0, Tenang: 0 };
             let equityHistory = [config.capital];
+            
             const list = document.getElementById('trade-list'); list.innerHTML = '';
             
+            // Urutkan trade dari lama ke baru untuk chart
             const sortedTrades = [...trades].reverse();
-            let currentEq = config.capital;
+            let currentEquity = config.capital;
+
             sortedTrades.forEach(t => {
-                currentEq += (t.result === 'win' ? parseFloat(t.pnl) : -parseFloat(t.pnl));
-                equityHistory.push(currentEq);
+                const val = parseFloat(t.pnl);
+                if(t.result === 'win') { currentEquity += val; }
+                else { currentEquity -= val; }
+                equityHistory.push(currentEquity);
             });
 
             trades.forEach(t => {
                 const val = parseFloat(t.pnl);
+                emotionStats[t.emotion]++;
                 if(t.result === 'win') { totalProfit += val; winCount++; totalWinVal += val; }
-                else { totalProfit -= val; totalLossVal += val; emotionLoss[t.emotion]++; }
+                else { 
+                    totalProfit -= val; totalLossVal += val; 
+                    emotionLoss[t.emotion]++;
+                }
                 
                 const sideColor = t.side === 'BUY' ? 'var(--win-color)' : 'var(--loss-color)';
                 const emotionIcon = t.emotion === 'Tenang' ? '🧘' : t.emotion === 'Takut' ? '😨' : t.emotion === 'FOMO' ? '🚀' : '😡';
                 
                 list.innerHTML += `<div class="card" style="border-left: 4px solid ${t.result==='win'?'var(--win-color)':'var(--loss-color)'}">
                     <div class="history-item">
-                        <div><strong style="color:${sideColor}">${t.side}</strong> <strong>${t.pair}</strong><br><small style="color:#aaa;">RR: ${t.rr} | ${emotionIcon} ${t.emotion}</small></div>
+                        <div><strong style="color:${sideColor}">${t.side}</strong> <strong>${t.pair}</strong><br>
+                        <small style="color:#aaa;">RR: ${t.rr} | ${emotionIcon} ${t.emotion}</small></div>
                         <div style="display:flex; align-items:center;"><span style="color:${t.result==='win'?'var(--win-color)':'var(--loss-color)'}; font-weight:bold; margin-right:10px;">${t.result==='win'?'+':'-'}$${val}</span><i class="fas fa-trash-alt del-btn" onclick="deleteTrade(${t.id})"></i></div>
                     </div>
                     ${t.ss ? `<img src="${t.ss}" class="vault-img" onclick="window.open('${t.ss}')">` : ''}
                 </div>`;
             });
 
-            const finalEq = config.capital + totalProfit - withdrawals.reduce((a,c) => a + c.amount, 0);
-            document.getElementById('home-balance').innerText = finalEq.toLocaleString();
-            document.getElementById('home-growth').innerText = `Growth: ${config.capital > 0 ? ((finalEq - config.capital) / config.capital * 100).toFixed(1) : 0}%`;
-            document.getElementById('stat-wr').innerText = (trades.length ? Math.round((winCount/trades.length)*100) : 0) + "%";
-            
-            // AI Insight Logic
-            let worst = Object.keys(emotionLoss).reduce((a, b) => emotionLoss[a] > emotionLoss[b] ? a : b);
-            document.getElementById('ai-insight').innerHTML = trades.length < 3 ? "Catat 3 trade untuk analisa AI." : 
-                (emotionLoss[worst] > 0 ? `AI: Lu sering loss pas lagi **${worst}**. Jauhi market kalau lagi emosi gitu Bre!` : "AI: Psikologi lo sehat banget. Pertahankan!");
+            // AI Analyzer Logic
+            let aiInsight = "Analisa AI: ";
+            if(trades.length < 3) {
+                aiInsight += "Kumpulin minimal 3 trade buat dapet insight psikologi.";
+            } else {
+                let worstEmotion = Object.keys(emotionLoss).reduce((a, b) => emotionLoss[a] > emotionLoss[b] ? a : b);
+                if(emotionLoss[worstEmotion] > 0) {
+                    aiInsight += `Bre, lu sering loss pas lagi **${worstEmotion}**. ` + 
+                                (worstEmotion === 'FOMO' ? "Mending HP taruh dulu kalau market lagi lari kenceng, jangan dikejar." : 
+                                 worstEmotion === 'Marah' ? "Stop revenge trading! Istirahat minimal 24 jam kalau habis loss marah." : 
+                                 "Percaya sama analisa lu, jangan ragu pas entry.");
+                } else {
+                    aiInsight += "Psikologi lu mantep! Tetap tenang dan disiplin.";
+                }
+            }
+            document.getElementById('ai-insight').innerHTML = aiInsight;
 
+            const finalEquity = config.capital + totalProfit - withdrawals.reduce((a,c) => a + c.amount, 0);
+            const growth = config.capital > 0 ? ((finalEquity - config.capital) / config.capital * 100).toFixed(1) : 0;
+            let daysActive = (trades.length > 0) ? Math.ceil(Math.abs(new Date() - new Date(trades[trades.length-1].date)) / (1000 * 60 * 60 * 24)) || 1 : 0;
+            
+            document.getElementById('home-balance').innerText = finalEquity.toLocaleString();
+            document.getElementById('home-growth').innerText = `Growth: ${growth}% ${growth >= 0 ? '📈' : '📉'}`;
+            document.getElementById('stat-wr').innerText = (trades.length ? Math.round((winCount/trades.length)*100) : 0) + "%";
+            document.getElementById('stat-days').innerText = daysActive + " Days";
+            document.getElementById('stat-total-win').innerText = "$" + totalWinVal.toLocaleString();
+            document.getElementById('stat-total-loss').innerText = "$" + totalLossVal.toLocaleString();
+            document.getElementById('wd-summary-list').innerHTML = withdrawals.slice(0,5).map(w => `<div class="wd-item"><span>${w.date} - <strong style="color:var(--wd-color)">$${w.amount}</strong></span><i class="fas fa-trash-alt del-btn" onclick="deleteWD(${w.id})"></i></div>`).join('') || '<small style="color:#666">No WD</small>';
+            
             renderChart(equityHistory);
-            renderItems(finalEq);
+            renderItems(finalEquity);
         }
 
         function renderChart(data) {
@@ -297,14 +304,31 @@
                 type: 'line',
                 data: {
                     labels: data.map((_, i) => i),
-                    datasets: [{ label: 'Equity', data: data, borderColor: config.accent, backgroundColor: 'rgba(255,75,43,0.1)', borderWidth: 2, tension: 0.3, fill: true, pointRadius: 0 }]
+                    datasets: [{
+                        label: 'Equity',
+                        data: data,
+                        borderColor: config.accent,
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', font: { size: 10 } } } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        x: { display: false },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', font: { size: 10 } } }
+                    }
+                }
             });
         }
 
         function addItem() {
-            const name = document.getElementById('itemName').value, price = parseFloat(document.getElementById('itemPrice').value);
+            const name = document.getElementById('itemName').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
             if(!name || isNaN(price)) return;
             items.unshift({ id: Date.now(), name, img: document.getElementById('itemImage').value, price });
             localStorage.setItem('dreamItems', JSON.stringify(items));
@@ -313,7 +337,7 @@
 
         function renderItems(equity) {
             const list = document.getElementById('dream-list'); list.innerHTML = '';
-             items.forEach(i => {
+            items.forEach(i => {
                 const p = Math.min(Math.max((equity / i.price) * 100, 0), 100);
                 list.innerHTML += `<div class="card" style="padding:0; overflow:hidden; position:relative; border:${equity>=i.price?'2px solid var(--win-color)':'var(--glass-border)'}">
                     <i class="fas fa-times-circle" onclick="deleteItem(${i.id})" style="position:absolute; top:5px; right:5px; z-index:10; cursor:pointer; color: white;"></i>
