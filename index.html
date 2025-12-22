@@ -5,36 +5,37 @@
     <meta name="theme-color" content="#121212">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Trader Journal v5.0</title>
+    <title>Pro Trader Journal v5.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bg-color: #1a0505; --accent-color: #ff4b2b; --card-bg: rgba(255, 255, 255, 0.05); --glass-border: 1px solid rgba(255, 255, 255, 0.1); --win-color: #00e676; --loss-color: #ff1744; --wd-color: #03a9f4; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; margin: 0; padding: 20px 20px 120px 20px; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; margin: 0; padding: 20px 20px 160px 20px; min-height: 100vh; overflow-x: hidden; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: -2; pointer-events: none; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; position: relative; z-index: 1; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; position: relative; z-index: 10; }
         .user-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent-color); object-fit: cover; background: #333; }
-        .section { display: none; animation: fadeIn 0.4s ease; position: relative; z-index: 1; }
+        .section { display: none; animation: fadeIn 0.4s ease; position: relative; z-index: 5; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: var(--glass-border); backdrop-filter: blur(15px); }
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 12px; background: rgba(0,0,0,0.6); border: 1px solid #444; border-radius: 12px; color: white; outline: none; font-family: 'Poppins'; box-sizing: border-box; }
         .btn-primary { width: 100%; padding: 15px; background: var(--accent-color); border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; }
-        .nav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(15, 15, 15, 0.98); backdrop-filter: blur(25px); border-radius: 25px; display: flex; justify-content: space-around; padding: 15px; border: 1px solid rgba(255,255,255,0.2); z-index: 99999; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-        .nav-btn { background: none; border: none; color: #666; font-size: 24px; cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; -webkit-tap-highlight-color: transparent; }
-        .nav-btn.active { color: var(--accent-color); transform: translateY(-3px); transition: 0.3s; }
+        .nav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 25px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid rgba(255,255,255,0.15); z-index: 999999; box-shadow: 0 15px 35px rgba(0,0,0,0.7); pointer-events: auto; }
+        .nav-btn { background: none; border: none; color: #555; font-size: 22px; cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; -webkit-tap-highlight-color: transparent; transition: 0.3s; padding: 10px; }
+        .nav-btn.active { color: var(--accent-color); transform: translateY(-5px); }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .stat-box { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; text-align: center; border: var(--glass-border); }
         .history-item { display: flex; justify-content: space-between; align-items: center; }
-        .del-btn { color: #666; cursor: pointer; padding: 10px; font-size: 18px; }
+        .del-btn { color: #666; cursor: pointer; padding: 5px; font-size: 16px; transition: 0.2s; }
+        .del-btn:hover { color: var(--loss-color); }
         .progress-container { width: 100%; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; margin: 8px 0; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--accent-color); }
-        .label-small { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
-        .wd-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .chart-container { width: 100%; height: 200px; margin-top: 10px; }
-        .ai-msg { background: rgba(3, 169, 244, 0.1); border: 1px solid var(--wd-color); padding: 10px; border-radius: 12px; font-size: 12px; margin-top: 10px; color: #eee; line-height: 1.4; }
-        .vault-img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-top: 10px; border: 1px solid #444; }
+        .label-small { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .wd-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .chart-container { width: 100%; height: 180px; position: relative; }
+        .ai-msg { background: rgba(3, 169, 244, 0.1); border-left: 3px solid var(--wd-color); padding: 12px; border-radius: 12px; font-size: 12px; margin-top: 10px; color: #eee; line-height: 1.5; }
+        .vault-img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid #444; }
     </style>
 </head>
 <body>
@@ -51,24 +52,18 @@
             <h1 style="margin: 5px 0; font-size: 34px;">$ <span id="home-balance">0</span></h1>
             <div id="home-growth" style="font-size: 12px; font-weight: bold; opacity: 0.9;">Growth: 0%</div>
         </div>
-
         <div class="card">
             <span class="label-small"><i class="fas fa-chart-area"></i> Equity Curve</span>
-            <div class="chart-container">
-                <canvas id="equityChart"></canvas>
-            </div>
+            <div class="chart-container"><canvas id="equityChart"></canvas></div>
         </div>
-
         <div class="stat-grid">
             <div class="stat-box"><span class="label-small">Win Rate</span><div id="stat-wr" style="font-weight: 600; color: var(--win-color);">0%</div></div>
             <div class="stat-box"><span class="label-small">Days Active</span><div id="stat-days" style="font-weight: 600;">0 Days</div></div>
         </div>
-
         <div class="card">
             <span class="label-small"><i class="fas fa-robot"></i> AI Psychology Insights</span>
-            <div id="ai-insight" class="ai-msg">Mulai catat trade lo untuk mendapatkan analisa psikologi trading otomatis.</div>
+            <div id="ai-insight" class="ai-msg">Mulai catat trade lo.</div>
         </div>
-
         <h4 style="margin: 20px 0 10px 5px;"><i class="fas fa-money-bill-wave"></i> Recent Withdrawals</h4>
         <div id="wd-summary-list" class="card"></div>
     </div>
@@ -85,7 +80,6 @@
                 <input type="number" id="pnl" placeholder="P&L Amount ($)">
                 <input type="number" id="rr" placeholder="RR Ratio" step="0.1">
             </div>
-            
             <label class="label-small">Feeling Entry:</label>
             <select id="emotion">
                 <option value="Tenang">🧘 Tenang / Disiplin</option>
@@ -93,10 +87,7 @@
                 <option value="FOMO">🚀 FOMO / Buru-buru</option>
                 <option value="Marah">😡 Marah / Revenge Trade</option>
             </select>
-            
-            <label class="label-small">Chart Screenshot (URL):</label>
-            <input type="text" id="screenshot" placeholder="Link Gambar Chart (Imgur/Postimg)">
-
+            <input type="text" id="screenshot" placeholder="Link Gambar Chart">
             <button class="btn-primary" onclick="addTrade()">Submit Trade</button>
             <button class="btn-primary" onclick="addWithdrawal()" style="background: var(--wd-color); margin-top:10px;">Withdrawal</button>
         </div>
@@ -119,19 +110,22 @@
         <div class="card" style="text-align: center;">
             <img src="" id="preview-avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent-color); object-fit: cover;">
             <input type="file" id="file-input" accept="image/*" onchange="previewImage(event)" style="display:none;">
-            <br>
-            <button onclick="document.getElementById('file-input').click()" style="background:none; border:1px solid var(--accent-color); color:var(--accent-color); padding:5px 12px; border-radius:8px; font-size:12px; margin: 10px 0 20px 0;">Ganti Foto Profil</button>
+            <br><button onclick="document.getElementById('file-input').click()" style="background:none; border:1px solid var(--accent-color); color:var(--accent-color); padding:5px 12px; border-radius:8px; font-size:12px; margin: 10px 0 20px 0;">Ganti Foto</button>
+            
             <input type="text" id="input-name" placeholder="Nama">
             <input type="number" id="input-capital" placeholder="Modal Awal ($)">
+            
             <div style="text-align: left;">
                 <label class="label-small">Warna Aksen</label>
-                <input type="color" id="color-accent" onchange="updateTheme()" style="height: 45px; width: 100%; cursor: pointer; background: rgba(0,0,0,0.4); border: 1px solid #444; border-radius: 12px; padding: 5px; margin-bottom: 10px;">
+                <input type="color" id="color-accent" onchange="updateTheme()" style="height: 45px; width: 100%; border-radius: 12px; margin-bottom: 15px;">
+                
                 <label class="label-small">Wallpaper Galeri</label>
                 <input type="file" id="bg-input" accept="image/*" onchange="previewBg(event)" style="display:none;">
                 <button onclick="document.getElementById('bg-input').click()" style="width:100%; padding:12px; background:rgba(255,255,255,0.1); border:1px solid #444; border-radius:12px; color:white; font-family:'Poppins'; margin-bottom:15px;"><i class="fas fa-image"></i> Pilih Wallpaper</button>
             </div>
+
             <button class="btn-primary" onclick="saveProfile()">Simpan Perubahan</button>
-            <button onclick="clearAllData()" style="background:none; border:none; color:var(--loss-color); font-size:11px; margin-top:20px;">Reset Aplikasi</button>
+            <button onclick="clearAllData()" style="background:none; border:none; color:var(--loss-color); font-size:11px; margin-top:20px;">Reset Semua</button>
         </div>
     </div>
 
@@ -175,9 +169,13 @@
             reader.readAsDataURL(event.target.files[0]);
         }
 
+        // --- FITUR WALLPAPER YANG DIKEMBALIKAN ---
         function previewBg(event) {
             const reader = new FileReader();
-            reader.onload = () => { config.bgData = reader.result; document.body.style.backgroundImage = `url('${reader.result}')`; };
+            reader.onload = () => { 
+                config.bgData = reader.result; 
+                document.body.style.backgroundImage = `url('${reader.result}')`; 
+            };
             reader.readAsDataURL(event.target.files[0]);
         }
 
@@ -185,6 +183,7 @@
             config.name = document.getElementById('input-name').value;
             config.capital = parseFloat(document.getElementById('input-capital').value) || 0;
             config.accent = document.getElementById('color-accent').value;
+            // bgData sudah terupdate di previewBg, tinggal save ke localStorage
             localStorage.setItem('traderConfig', JSON.stringify(config));
             applyTheme(); updateUI(); alert("Saved!");
         }
@@ -196,139 +195,89 @@
         }
 
         function addTrade() {
-            const pair = document.getElementById('pair').value;
-            const pnl = parseFloat(document.getElementById('pnl').value);
-            const rr = document.getElementById('rr').value || "0";
-            const emotion = document.getElementById('emotion').value;
-            const ss = document.getElementById('screenshot').value;
+            const pair = document.getElementById('pair').value, pnl = parseFloat(document.getElementById('pnl').value);
             if(!pair || isNaN(pnl)) return;
-            trades.unshift({ 
-                id: Date.now(), pair: pair.toUpperCase(), 
-                side: document.getElementById('side').value, 
-                result: document.getElementById('result').value, 
-                pnl, rr, emotion, ss,
-                date: new Date().toISOString() 
-            });
+            trades.unshift({ id: Date.now(), pair: pair.toUpperCase(), side: document.getElementById('side').value, result: document.getElementById('result').value, pnl, rr: document.getElementById('rr').value || "0", emotion: document.getElementById('emotion').value, ss: document.getElementById('screenshot').value, date: new Date().toISOString() });
             localStorage.setItem('trades', JSON.stringify(trades));
-            updateUI(); 
+            updateUI();
             ['pair','pnl','rr','screenshot'].forEach(id => document.getElementById(id).value = '');
         }
 
-        function deleteTrade(id) { if(confirm("Hapus trade ini?")) { trades = trades.filter(t => t.id !== id); localStorage.setItem('trades', JSON.stringify(trades)); updateUI(); } }
+        function deleteTrade(id) { if(confirm("Hapus trade?")) { trades = trades.filter(t => t.id !== id); localStorage.setItem('trades', JSON.stringify(trades)); updateUI(); } }
 
         function addWithdrawal() {
             const amt = parseFloat(prompt("Jumlah WD ($):"));
-            if(!isNaN(amt) && amt > 0) { withdrawals.unshift({ id: Date.now(), amount: amt, date: new Date().toLocaleDateString() }); localStorage.setItem('withdrawals', JSON.stringify(withdrawals)); updateUI(); }
+            if(!isNaN(amt) && amt > 0) {
+                withdrawals.unshift({ id: Date.now(), amount: amt, date: new Date().toLocaleDateString() });
+                localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+                updateUI();
+            }
         }
 
-        function deleteWD(id) { if(confirm("Hapus WD?")) { withdrawals = withdrawals.filter(w => w.id !== id); localStorage.setItem('withdrawals', JSON.stringify(withdrawals)); updateUI(); } }
+        function deleteWD(id) {
+            if(confirm("Hapus WD dari history?")) {
+                withdrawals = withdrawals.filter(w => w.id !== id);
+                localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+                updateUI();
+            }
+        }
 
         function updateUI() {
-            let totalProfit = 0, winCount = 0, totalWinVal = 0, totalLossVal = 0;
-            let emotionStats = { FOMO: 0, Takut: 0, Marah: 0, Tenang: 0 };
+            let totalProfit = 0, winCount = 0, totalLossVal = 0;
             let emotionLoss = { FOMO: 0, Takut: 0, Marah: 0, Tenang: 0 };
             let equityHistory = [config.capital];
             
             const list = document.getElementById('trade-list'); list.innerHTML = '';
-            
-            // Urutkan trade dari lama ke baru untuk chart
             const sortedTrades = [...trades].reverse();
-            let currentEquity = config.capital;
-
+            let currentEq = config.capital;
             sortedTrades.forEach(t => {
-                const val = parseFloat(t.pnl);
-                if(t.result === 'win') { currentEquity += val; }
-                else { currentEquity -= val; }
-                equityHistory.push(currentEquity);
+                currentEq += (t.result === 'win' ? parseFloat(t.pnl) : -parseFloat(t.pnl));
+                equityHistory.push(currentEq);
             });
 
             trades.forEach(t => {
                 const val = parseFloat(t.pnl);
-                emotionStats[t.emotion]++;
-                if(t.result === 'win') { totalProfit += val; winCount++; totalWinVal += val; }
-                else { 
-                    totalProfit -= val; totalLossVal += val; 
-                    emotionLoss[t.emotion]++;
-                }
-                
-                const sideColor = t.side === 'BUY' ? 'var(--win-color)' : 'var(--loss-color)';
-                const emotionIcon = t.emotion === 'Tenang' ? '🧘' : t.emotion === 'Takut' ? '😨' : t.emotion === 'FOMO' ? '🚀' : '😡';
+                if(t.result === 'win') { totalProfit += val; winCount++; }
+                else { totalProfit -= val; totalLossVal += val; emotionLoss[t.emotion]++; }
                 
                 list.innerHTML += `<div class="card" style="border-left: 4px solid ${t.result==='win'?'var(--win-color)':'var(--loss-color)'}">
                     <div class="history-item">
-                        <div><strong style="color:${sideColor}">${t.side}</strong> <strong>${t.pair}</strong><br>
-                        <small style="color:#aaa;">RR: ${t.rr} | ${emotionIcon} ${t.emotion}</small></div>
+                        <div><strong style="color:${t.side==='BUY'?'var(--win-color)':'var(--loss-color)'}">${t.side}</strong> <strong>${t.pair}</strong><br><small style="color:#aaa;">RR: ${t.rr} | ${t.emotion}</small></div>
                         <div style="display:flex; align-items:center;"><span style="color:${t.result==='win'?'var(--win-color)':'var(--loss-color)'}; font-weight:bold; margin-right:10px;">${t.result==='win'?'+':'-'}$${val}</span><i class="fas fa-trash-alt del-btn" onclick="deleteTrade(${t.id})"></i></div>
                     </div>
-                    ${t.ss ? `<img src="${t.ss}" class="vault-img" onclick="window.open('${t.ss}')">` : ''}
                 </div>`;
             });
 
-            // AI Analyzer Logic
-            let aiInsight = "Analisa AI: ";
-            if(trades.length < 3) {
-                aiInsight += "Kumpulin minimal 3 trade buat dapet insight psikologi.";
-            } else {
-                let worstEmotion = Object.keys(emotionLoss).reduce((a, b) => emotionLoss[a] > emotionLoss[b] ? a : b);
-                if(emotionLoss[worstEmotion] > 0) {
-                    aiInsight += `Bre, lu sering loss pas lagi **${worstEmotion}**. ` + 
-                                (worstEmotion === 'FOMO' ? "Mending HP taruh dulu kalau market lagi lari kenceng, jangan dikejar." : 
-                                 worstEmotion === 'Marah' ? "Stop revenge trading! Istirahat minimal 24 jam kalau habis loss marah." : 
-                                 "Percaya sama analisa lu, jangan ragu pas entry.");
-                } else {
-                    aiInsight += "Psikologi lu mantep! Tetap tenang dan disiplin.";
-                }
-            }
-            document.getElementById('ai-insight').innerHTML = aiInsight;
+            const wdList = document.getElementById('wd-summary-list');
+            wdList.innerHTML = '';
+            withdrawals.forEach(w => {
+                wdList.innerHTML += `<div class="wd-item">
+                    <span><small style="color:#888;">${w.date}</small> - <strong style="color:var(--wd-color)">$${w.amount}</strong></span>
+                    <i class="fas fa-trash-alt del-btn" onclick="deleteWD(${w.id})"></i>
+                </div>`;
+            });
+            if(withdrawals.length === 0) wdList.innerHTML = '<small style="color:#666; display:block; text-align:center;">No WD History</small>';
 
-            const finalEquity = config.capital + totalProfit - withdrawals.reduce((a,c) => a + c.amount, 0);
-            const growth = config.capital > 0 ? ((finalEquity - config.capital) / config.capital * 100).toFixed(1) : 0;
-            let daysActive = (trades.length > 0) ? Math.ceil(Math.abs(new Date() - new Date(trades[trades.length-1].date)) / (1000 * 60 * 60 * 24)) || 1 : 0;
-            
-            document.getElementById('home-balance').innerText = finalEquity.toLocaleString();
-            document.getElementById('home-growth').innerText = `Growth: ${growth}% ${growth >= 0 ? '📈' : '📉'}`;
+            const finalEq = config.capital + totalProfit - withdrawals.reduce((a,c) => a + c.amount, 0);
+            document.getElementById('home-balance').innerText = finalEq.toLocaleString();
+            document.getElementById('home-growth').innerText = `Growth: ${config.capital > 0 ? ((finalEq - config.capital) / config.capital * 100).toFixed(1) : 0}%`;
             document.getElementById('stat-wr').innerText = (trades.length ? Math.round((winCount/trades.length)*100) : 0) + "%";
-            document.getElementById('stat-days').innerText = daysActive + " Days";
-            document.getElementById('stat-total-win').innerText = "$" + totalWinVal.toLocaleString();
-            document.getElementById('stat-total-loss').innerText = "$" + totalLossVal.toLocaleString();
-            document.getElementById('wd-summary-list').innerHTML = withdrawals.slice(0,5).map(w => `<div class="wd-item"><span>${w.date} - <strong style="color:var(--wd-color)">$${w.amount}</strong></span><i class="fas fa-trash-alt del-btn" onclick="deleteWD(${w.id})"></i></div>`).join('') || '<small style="color:#666">No WD</small>';
             
+            let worst = Object.keys(emotionLoss).reduce((a, b) => emotionLoss[a] > emotionLoss[b] ? a : b);
+            document.getElementById('ai-insight').innerHTML = trades.length < 3 ? "Catat 3 trade." : (emotionLoss[worst] > 0 ? `AI: Loss terbanyak pas lagi **${worst}**.` : "AI: Psikologi mantap!");
+
             renderChart(equityHistory);
-            renderItems(finalEquity);
+            renderItems(finalEq);
         }
 
         function renderChart(data) {
             const ctx = document.getElementById('equityChart').getContext('2d');
             if(myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map((_, i) => i),
-                    datasets: [{
-                        label: 'Equity',
-                        data: data,
-                        borderColor: config.accent,
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { 
-                        x: { display: false },
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', font: { size: 10 } } }
-                    }
-                }
-            });
+            myChart = new Chart(ctx, { type: 'line', data: { labels: data.map((_, i) => i), datasets: [{ label: 'Equity', data: data, borderColor: config.accent, backgroundColor: 'rgba(255,75,43,0.1)', borderWidth: 2, tension: 0.3, fill: true, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', font: { size: 10 } } } } } });
         }
 
         function addItem() {
-            const name = document.getElementById('itemName').value;
-            const price = parseFloat(document.getElementById('itemPrice').value);
+            const name = document.getElementById('itemName').value, price = parseFloat(document.getElementById('itemPrice').value);
             if(!name || isNaN(price)) return;
             items.unshift({ id: Date.now(), name, img: document.getElementById('itemImage').value, price });
             localStorage.setItem('dreamItems', JSON.stringify(items));
@@ -339,17 +288,16 @@
             const list = document.getElementById('dream-list'); list.innerHTML = '';
             items.forEach(i => {
                 const p = Math.min(Math.max((equity / i.price) * 100, 0), 100);
-                list.innerHTML += `<div class="card" style="padding:0; overflow:hidden; position:relative; border:${equity>=i.price?'2px solid var(--win-color)':'var(--glass-border)'}">
-                    <i class="fas fa-times-circle" onclick="deleteItem(${i.id})" style="position:absolute; top:5px; right:5px; z-index:10; cursor:pointer; color: white;"></i>
+                list.innerHTML += `<div class="card" style="padding:0; overflow:hidden; position:relative;">
+                    <i class="fas fa-times-circle" onclick="deleteItem(${i.id})" style="position:absolute; top:5px; right:5px; z-index:10; cursor:pointer;"></i>
                     <img src="${i.img || 'https://via.placeholder.com/150'}" style="width:100%; height:80px; object-fit:cover;">
                     <div style="padding:10px;"><small style="font-size:10px;">${i.name}</small><br><strong>$${i.price.toLocaleString()}</strong>
-                    <div class="progress-container"><div class="progress-bar" style="width:${p}%; background:var(--accent-color);"></div></div>
-                    </div></div>`;
+                    <div class="progress-container"><div class="progress-bar" style="width:${p}%; background:var(--accent-color);"></div></div></div></div>`;
             });
         }
 
         function deleteItem(id) { if(confirm("Hapus?")) { items = items.filter(i => i.id !== id); localStorage.setItem('dreamItems', JSON.stringify(items)); updateUI(); } }
-        function clearAllData() { if(confirm("Hapus semua?")) { localStorage.clear(); location.reload(); } }
+        function clearAllData() { if(confirm("Reset semua?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
