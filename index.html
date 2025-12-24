@@ -62,12 +62,16 @@
         <div class="card">
             <span class="label-small"><i class="fas fa-chart-area"></i> Equity Curve</span>
             <div class="chart-container"><canvas id="equityChart"></canvas></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.1);">
+                <small style="color: #888;">Total Trades:</small>
+                <strong id="total-trades" style="color: var(--accent-color); font-size: 16px;">0</strong>
+            </div>
         </div>
-        <div class="stat-grid">
+        <div class="stat-grid" style="margin-top: 15px;">
             <div class="stat-box"><span class="label-small">Win Rate</span><div id="stat-wr" style="font-weight: 600; color: var(--win-color);">0%</div></div>
             <div class="stat-box"><span class="label-small">Days Active</span><div id="stat-days" style="font-weight: 600;">0 Days</div></div>
         </div>
-        <div class="card">
+        <div class="card" style="margin-top: 15px;">
             <span class="label-small"><i class="fas fa-robot"></i> AI Psychology Insights</span>
             <div id="ai-insight" class="ai-msg">Mulai catat trade lo.</div>
         </div>
@@ -94,7 +98,9 @@
                 <option value="FOMO">🚀 FOMO / Buru-buru</option>
                 <option value="Marah">😡 Marah / Revenge Trade</option>
             </select>
-            <input type="text" id="screenshot" placeholder="Link Gambar Chart">
+            <input type="text" id="screenshot" placeholder="Link Gambar Chart (opsional)">
+            <label class="label-small">Atau Upload Gambar:</label>
+            <input type="file" id="trade-screenshot" accept="image/*" style="padding: 8px;">
             <button class="btn-primary" onclick="addTrade()">Submit Trade</button>
             <button class="btn-primary" onclick="addWithdrawal()" style="background: var(--wd-color); margin-top:10px;">Withdrawal</button>
         </div>
@@ -221,8 +227,37 @@
 
         function addTrade() {
             const pair = document.getElementById('pair').value, pnl = parseFloat(document.getElementById('pnl').value);
-            if(!pair || isNaN(pnl)) return;
-            trades.unshift({ id: Date.now(), pair: pair.toUpperCase(), side: document.getElementById('side').value, result: document.getElementById('result').value, pnl, rr: document.getElementById('rr').value || "0", emotion: document.getElementById('emotion').value, ss: document.getElementById('screenshot').value, date: new Date().toISOString() });
+            if(!pair || isNaN(pnl)) return alert("Isi pair dan P&L dulu!");
+            
+            let screenshotData = document.getElementById('screenshot').value;
+            const fileInput = document.getElementById('trade-screenshot');
+            
+            // Cek apakah ada file yang diupload
+            if(fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    screenshotData = e.target.result;
+                    saveTrade(pair, pnl, screenshotData);
+                    fileInput.value = ''; // Clear file input
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                saveTrade(pair, pnl, screenshotData);
+            }
+        }
+        
+        function saveTrade(pair, pnl, screenshotData) {
+            trades.unshift({ 
+                id: Date.now(), 
+                pair: pair.toUpperCase(), 
+                side: document.getElementById('side').value, 
+                result: document.getElementById('result').value, 
+                pnl, 
+                rr: document.getElementById('rr').value || "0", 
+                emotion: document.getElementById('emotion').value, 
+                ss: screenshotData, 
+                date: new Date().toISOString() 
+            });
             localStorage.setItem('trades', JSON.stringify(trades));
             updateUI();
             ['pair','pnl','rr','screenshot'].forEach(id => document.getElementById(id).value = '');
@@ -332,11 +367,14 @@
                 if(t.result === 'win') { totalProfit += val; winCount++; }
                 else { totalProfit -= val; totalLossVal += val; emotionLoss[t.emotion]++; }
                 
+                const screenshotHtml = t.ss ? `<img src="${t.ss}" class="vault-img" style="margin-top:10px;">` : '';
+                
                 list.innerHTML += `<div class="card" style="border-left: 4px solid ${t.result==='win'?'var(--win-color)':'var(--loss-color)'}">
                     <div class="history-item">
                         <div><strong style="color:${t.side==='BUY'?'var(--win-color)':'var(--loss-color)'}">${t.side}</strong> <strong>${t.pair}</strong><br><small style="color:#aaa;">RR: ${t.rr} | ${t.emotion}</small></div>
                         <div style="display:flex; align-items:center;"><span style="color:${t.result==='win'?'var(--win-color)':'var(--loss-color)'}; font-weight:bold; margin-right:10px;">${t.result==='win'?'+':'-'}$${val}</span><i class="fas fa-trash-alt del-btn" onclick="deleteTrade(${t.id})"></i></div>
                     </div>
+                    ${screenshotHtml}
                 </div>`;
             });
 
@@ -354,6 +392,18 @@
             document.getElementById('home-balance').innerText = finalEq.toLocaleString();
             document.getElementById('home-growth').innerText = `Growth: ${config.capital > 0 ? ((finalEq - config.capital) / config.capital * 100).toFixed(1) : 0}%`;
             document.getElementById('stat-wr').innerText = (trades.length ? Math.round((winCount/trades.length)*100) : 0) + "%";
+            document.getElementById('total-trades').innerText = trades.length;
+            
+            // Calculate days active
+            if(trades.length > 0) {
+                const firstTradeDate = new Date(trades[trades.length - 1].date);
+                const today = new Date();
+                const diffTime = Math.abs(today - firstTradeDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById('stat-days').innerText = `${diffDays} Day${diffDays !== 1 ? 's' : ''}`;
+            } else {
+                document.getElementById('stat-days').innerText = '0 Days';
+            }
             
             let worst = Object.keys(emotionLoss).reduce((a, b) => emotionLoss[a] > emotionLoss[b] ? a : b);
             document.getElementById('ai-insight').innerHTML = trades.length < 3 ? "Catat 3 trade." : (emotionLoss[worst] > 0 ? `AI: Loss terbanyak pas lagi **${worst}**.` : "AI: Psikologi mantap!");
