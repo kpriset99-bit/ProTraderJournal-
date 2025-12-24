@@ -5,7 +5,7 @@
     <meta name="theme-color" content="#121212">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Trader Journal v5.2</title>
+    <title>Pro Trader Journal v5.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,9 +20,10 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: var(--glass-border); backdrop-filter: blur(15px); }
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 12px; background: rgba(0,0,0,0.6); border: 1px solid #444; border-radius: 12px; color: white; outline: none; font-family: 'Poppins'; box-sizing: border-box; }
+        textarea { min-height: 100px; resize: vertical; }
         .btn-primary { width: 100%; padding: 15px; background: var(--accent-color); border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; }
-        .nav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 25px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid rgba(255,255,255,0.15); z-index: 999999; box-shadow: 0 15px 35px rgba(0,0,0,0.7); pointer-events: auto; }
-        .nav-btn { background: none; border: none; color: #555; font-size: 22px; cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; -webkit-tap-highlight-color: transparent; transition: 0.3s; padding: 10px; }
+        .nav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 25px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid rgba(255,255,255,0.15); z-index: 999999; box-shadow: 0 15px 35px rgba(0,0,0,0.7); pointer-events: auto; }
+        .nav-btn { background: none; border: none; color: #555; font-size: 20px; cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; -webkit-tap-highlight-color: transparent; transition: 0.3s; padding: 10px; }
         .nav-btn.active { color: var(--accent-color); transform: translateY(-5px); }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .stat-box { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; text-align: center; border: var(--glass-border); }
@@ -36,6 +37,12 @@
         .chart-container { width: 100%; height: 180px; position: relative; }
         .ai-msg { background: rgba(3, 169, 244, 0.1); border-left: 3px solid var(--wd-color); padding: 12px; border-radius: 12px; font-size: 12px; margin-top: 10px; color: #eee; line-height: 1.5; }
         .vault-img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid #444; }
+        .journal-entry { border-left: 4px solid var(--accent-color); margin-bottom: 15px; }
+        .journal-category { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; }
+        .cat-mistake { background: rgba(255, 23, 68, 0.2); color: var(--loss-color); }
+        .cat-lesson { background: rgba(0, 230, 118, 0.2); color: var(--win-color); }
+        .cat-analysis { background: rgba(3, 169, 244, 0.2); color: var(--wd-color); }
+        .cat-note { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
     </style>
 </head>
 <body>
@@ -69,7 +76,7 @@
     </div>
 
     <div id="trading" class="section">
-        <h3>Journal</h3>
+        <h3>Trade Journal</h3>
         <div class="card">
             <input type="text" id="pair" placeholder="Pair (ex: BTC/USDT)">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -92,6 +99,24 @@
             <button class="btn-primary" onclick="addWithdrawal()" style="background: var(--wd-color); margin-top:10px;">Withdrawal</button>
         </div>
         <div id="trade-list"></div>
+    </div>
+
+    <div id="journal" class="section">
+        <h3><i class="fas fa-book"></i> Personal Journal</h3>
+        <div class="card">
+            <label class="label-small">Kategori:</label>
+            <select id="journal-category">
+                <option value="mistake">❌ Kesalahan</option>
+                <option value="lesson">✅ Pelajaran</option>
+                <option value="analysis">📊 Analisis</option>
+                <option value="note">📝 Catatan</option>
+            </select>
+            <input type="text" id="journal-title" placeholder="Judul (opsional)">
+            <textarea id="journal-content" placeholder="Tulis jurnal lo di sini... Apa yang salah? Apa yang dipelajari? Analisis trade, dll."></textarea>
+            <button class="btn-primary" onclick="addJournal()"><i class="fas fa-plus"></i> Tambah Journal Entry</button>
+        </div>
+        <h4 style="margin: 20px 0 10px 5px;">Entries</h4>
+        <div id="journal-list"></div>
     </div>
 
     <div id="saving" class="section">
@@ -132,6 +157,7 @@
     <nav class="nav-container">
         <button class="nav-btn active" onclick="showTab('home', this)"><i class="fas fa-home"></i></button>
         <button class="nav-btn" onclick="showTab('trading', this)"><i class="fas fa-chart-line"></i></button>
+        <button class="nav-btn" onclick="showTab('journal', this)"><i class="fas fa-book"></i></button>
         <button class="nav-btn" onclick="showTab('saving', this)"><i class="fas fa-wallet"></i></button>
         <button class="nav-btn" onclick="showTab('settings', this)"><i class="fas fa-cog"></i></button>
     </nav>
@@ -140,6 +166,7 @@
         let trades = JSON.parse(localStorage.getItem('trades')) || [];
         let items = JSON.parse(localStorage.getItem('dreamItems')) || [];
         let withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+        let journals = JSON.parse(localStorage.getItem('journals')) || [];
         let config = JSON.parse(localStorage.getItem('traderConfig')) || { name: "Trader", capital: 0, accent: "#ff4b2b", bgData: "", profilePic: "https://ui-avatars.com/api/?name=User" };
         let myChart;
 
@@ -169,7 +196,6 @@
             reader.readAsDataURL(event.target.files[0]);
         }
 
-        // --- FITUR WALLPAPER YANG DIKEMBALIKAN ---
         function previewBg(event) {
             const reader = new FileReader();
             reader.onload = () => { 
@@ -183,7 +209,6 @@
             config.name = document.getElementById('input-name').value;
             config.capital = parseFloat(document.getElementById('input-capital').value) || 0;
             config.accent = document.getElementById('color-accent').value;
-            // bgData sudah terupdate di previewBg, tinggal save ke localStorage
             localStorage.setItem('traderConfig', JSON.stringify(config));
             applyTheme(); updateUI(); alert("Saved!");
         }
@@ -220,6 +245,73 @@
                 localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
                 updateUI();
             }
+        }
+
+        function addJournal() {
+            const category = document.getElementById('journal-category').value;
+            const title = document.getElementById('journal-title').value;
+            const content = document.getElementById('journal-content').value.trim();
+            
+            if(!content) {
+                alert("Isi konten jurnal dulu!");
+                return;
+            }
+            
+            journals.unshift({
+                id: Date.now(),
+                category: category,
+                title: title || getCategoryName(category),
+                content: content,
+                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+                timestamp: new Date().toISOString()
+            });
+            
+            localStorage.setItem('journals', JSON.stringify(journals));
+            updateUI();
+            
+            document.getElementById('journal-title').value = '';
+            document.getElementById('journal-content').value = '';
+        }
+
+        function getCategoryName(cat) {
+            const names = {
+                'mistake': 'Kesalahan',
+                'lesson': 'Pelajaran',
+                'analysis': 'Analisis',
+                'note': 'Catatan'
+            };
+            return names[cat] || 'Entry';
+        }
+
+        function deleteJournal(id) {
+            if(confirm("Hapus journal entry ini?")) {
+                journals = journals.filter(j => j.id !== id);
+                localStorage.setItem('journals', JSON.stringify(journals));
+                updateUI();
+            }
+        }
+
+        function renderJournals() {
+            const list = document.getElementById('journal-list');
+            list.innerHTML = '';
+            
+            if(journals.length === 0) {
+                list.innerHTML = '<div class="card" style="text-align:center; color:#666;"><i class="fas fa-book-open" style="font-size:40px; margin-bottom:10px; opacity:0.3;"></i><p>Belum ada journal entry.<br>Mulai catat kesalahan & pelajaran lo!</p></div>';
+                return;
+            }
+            
+            journals.forEach(j => {
+                list.innerHTML += `<div class="card journal-entry">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                        <div>
+                            <span class="journal-category cat-${j.category}">${j.title}</span>
+                            <div style="font-size:10px; color:#888; margin-top:4px;"><i class="fas fa-calendar-alt"></i> ${j.date}</div>
+                        </div>
+                        <i class="fas fa-trash-alt del-btn" onclick="deleteJournal(${j.id})"></i>
+                    </div>
+                    <div style="font-size:13px; line-height:1.6; color:#ddd; white-space:pre-wrap;">${j.content}</div>
+                </div>`;
+            });
         }
 
         function updateUI() {
@@ -268,6 +360,7 @@
 
             renderChart(equityHistory);
             renderItems(finalEq);
+            renderJournals();
         }
 
         function renderChart(data) {
