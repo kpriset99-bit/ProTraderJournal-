@@ -5,60 +5,590 @@
     <meta name="theme-color" content="#121212">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Trader Journal v5.3</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Pro Trader Journal v6.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --bg-color: #1a0505; --accent-color: #ff4b2b; --card-bg: rgba(255, 255, 255, 0.05); --glass-border: 1px solid rgba(255, 255, 255, 0.1); --win-color: #00e676; --loss-color: #ff1744; --wd-color: #03a9f4; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; margin: 0; padding: 20px 20px 160px 20px; min-height: 100vh; overflow-x: hidden; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: -2; pointer-events: none; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; position: relative; z-index: 10; }
-        .user-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent-color); object-fit: cover; background: #333; }
-        .section { display: none; animation: fadeIn 0.4s ease; position: relative; z-index: 5; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: var(--glass-border); backdrop-filter: blur(15px); }
-        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 12px; background: rgba(0,0,0,0.6); border: 1px solid #444; border-radius: 12px; color: white; outline: none; font-family: 'Poppins'; box-sizing: border-box; }
-        textarea { min-height: 100px; resize: vertical; }
-        .btn-primary { width: 100%; padding: 15px; background: var(--accent-color); border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; }
-        .nav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 25px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid rgba(255,255,255,0.15); z-index: 999999; box-shadow: 0 15px 35px rgba(0,0,0,0.7); pointer-events: auto; }
-        .nav-btn { background: none; border: none; color: #555; font-size: 20px; cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; -webkit-tap-highlight-color: transparent; transition: 0.3s; padding: 10px; }
-        .nav-btn.active { color: var(--accent-color); transform: translateY(-5px); }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stat-box { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; text-align: center; border: var(--glass-border); }
-        .history-item { display: flex; justify-content: space-between; align-items: center; }
-        .del-btn { color: #666; cursor: pointer; padding: 5px; font-size: 16px; transition: 0.2s; }
-        .del-btn:hover { color: var(--loss-color); }
-        .progress-container { width: 100%; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; margin: 8px 0; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--accent-color); }
-        .label-small { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
-        .wd-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .chart-container { width: 100%; height: 180px; position: relative; }
-        .ai-msg { background: rgba(3, 169, 244, 0.1); border-left: 3px solid var(--wd-color); padding: 12px; border-radius: 12px; font-size: 12px; margin-top: 10px; color: #eee; line-height: 1.5; }
-        .vault-img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid #444; }
-        .journal-entry { border-left: 4px solid var(--accent-color); margin-bottom: 15px; }
-        .journal-category { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; }
-        .cat-mistake { background: rgba(255, 23, 68, 0.2); color: var(--loss-color); }
-        .cat-lesson { background: rgba(0, 230, 118, 0.2); color: var(--win-color); }
-        .cat-analysis { background: rgba(3, 169, 244, 0.2); color: var(--wd-color); }
-        .cat-note { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        :root { 
+            --bg-color: #1a0505; 
+            --accent-color: #ff4b2b;
+            --accent-color-2: #ff416c;
+            --card-bg: rgba(255, 255, 255, 0.05); 
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1); 
+            --win-color: #00e676; 
+            --loss-color: #ff1744; 
+            --wd-color: #03a9f4; 
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-color); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+            color: #fff; 
+            margin: 0; 
+            padding: 20px 20px 160px 20px; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+        
+        .overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.65); 
+            z-index: -2; 
+            pointer-events: none; 
+        }
+        
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            position: relative; 
+            z-index: 10; 
+        }
+        
+        .user-avatar { 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 50%; 
+            border: 2px solid var(--accent-color); 
+            object-fit: cover; 
+            background: #333; 
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(255, 75, 43, 0.4);
+        }
+        
+        .user-avatar:active {
+            transform: scale(0.95);
+        }
+        
+        .section { 
+            display: none; 
+            animation: fadeIn 0.4s ease; 
+            position: relative; 
+            z-index: 5; 
+        }
+        
+        .section.active { 
+            display: block; 
+        }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 20px; 
+            padding: 20px; 
+            margin-bottom: 15px; 
+            border: var(--glass-border); 
+            backdrop-filter: blur(15px); 
+        }
+        
+        /* Equity Card - VISA Style */
+        .equity-card {
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-color-2) 100%);
+            border-radius: 25px;
+            padding: 30px 25px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            box-shadow: 0 15px 40px rgba(255, 75, 43, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .equity-card::before {
+            content: '';
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -80px;
+        }
+        
+        .equity-card::after {
+            content: '';
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            bottom: -60px;
+            right: 40px;
+        }
+        
+        .equity-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .equity-label {
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .equity-amount {
+            font-size: 42px;
+            font-weight: 700;
+            margin: 10px 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .equity-growth {
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.15);
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+        
+        .equity-edit {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+        
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 12px; 
+            background: rgba(0,0,0,0.6); 
+            border: 1px solid #444; 
+            border-radius: 12px; 
+            color: white; 
+            outline: none; 
+            font-family: 'Poppins'; 
+            box-sizing: border-box; 
+        }
+        
+        textarea { 
+            min-height: 100px; 
+            resize: vertical; 
+        }
+        
+        .btn-primary { 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--accent-color); 
+            border: none; 
+            color: white; 
+            font-weight: bold; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .nav-container { 
+            position: fixed; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 90%; 
+            max-width: 450px; 
+            background: rgba(20, 20, 20, 0.95); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            border-radius: 25px; 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 12px; 
+            border: 1px solid rgba(255,255,255,0.15); 
+            z-index: 999999; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7); 
+            pointer-events: auto; 
+        }
+        
+        .nav-btn { 
+            background: none; 
+            border: none; 
+            color: #555; 
+            font-size: 20px; 
+            cursor: pointer; 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            -webkit-tap-highlight-color: transparent; 
+            transition: 0.3s; 
+            padding: 10px; 
+        }
+        
+        .nav-btn.active { 
+            color: var(--accent-color); 
+            transform: translateY(-5px); 
+        }
+        
+        .stat-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+        }
+        
+        .stat-box { 
+            background: rgba(255,255,255,0.05); 
+            padding: 12px; 
+            border-radius: 15px; 
+            text-align: center; 
+            border: var(--glass-border); 
+        }
+        
+        .history-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        
+        .del-btn { 
+            color: #666; 
+            cursor: pointer; 
+            padding: 5px; 
+            font-size: 16px; 
+            transition: 0.2s; 
+        }
+        
+        .del-btn:hover { 
+            color: var(--loss-color); 
+        }
+        
+        .progress-container { 
+            width: 100%; 
+            background: rgba(255,255,255,0.1); 
+            border-radius: 10px; 
+            height: 6px; 
+            margin: 8px 0; 
+            overflow: hidden; 
+        }
+        
+        .progress-bar { 
+            height: 100%; 
+            background: var(--accent-color); 
+        }
+        
+        .label-small { 
+            font-size: 10px; 
+            color: #aaa; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            display: block; 
+            margin-bottom: 5px; 
+        }
+        
+        .wd-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 12px 0; 
+            border-bottom: 1px solid rgba(255,255,255,0.08); 
+        }
+        
+        .chart-container { 
+            width: 100%; 
+            height: 180px; 
+            position: relative; 
+        }
+        
+        .ai-msg { 
+            background: rgba(3, 169, 244, 0.1); 
+            border-left: 3px solid var(--wd-color); 
+            padding: 12px; 
+            border-radius: 12px; 
+            font-size: 12px; 
+            margin-top: 10px; 
+            color: #eee; 
+            line-height: 1.5; 
+        }
+        
+        .vault-img { 
+            width: 100%; 
+            height: 120px; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            margin-top: 12px; 
+            border: 1px solid #444; 
+        }
+        
+        .journal-entry { 
+            border-left: 4px solid var(--accent-color); 
+            margin-bottom: 15px; 
+        }
+        
+        .journal-category { 
+            display: inline-block; 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            font-size: 10px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            margin-bottom: 8px; 
+        }
+        
+        .cat-mistake { 
+            background: rgba(255, 23, 68, 0.2); 
+            color: var(--loss-color); 
+        }
+        
+        .cat-lesson { 
+            background: rgba(0, 230, 118, 0.2); 
+            color: var(--win-color); 
+        }
+        
+        .cat-analysis { 
+            background: rgba(3, 169, 244, 0.2); 
+            color: var(--wd-color); 
+        }
+        
+        .cat-note { 
+            background: rgba(255, 193, 7, 0.2); 
+            color: #ffc107; 
+        }
+        
+        /* Settings Modal */
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+        }
+
+        .settings-modal.active {
+            display: flex;
+        }
+
+        .settings-content {
+            background: rgba(44, 62, 80, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px 25px;
+            width: 100%;
+            max-width: 420px;
+            color: white;
+            animation: slideUp 0.3s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .settings-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-modal-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal-btn:active {
+            transform: scale(0.9);
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        .setting-label {
+            font-size: 13px;
+            color: #95a5a6;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .upload-area {
+            background: rgba(52, 73, 94, 0.6);
+            border: 2px dashed #7f8c8d;
+            border-radius: 18px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-area:active {
+            transform: scale(0.98);
+            border-color: var(--accent-color);
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #7f8c8d;
+        }
+
+        .upload-text {
+            font-size: 13px;
+            color: #95a5a6;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .current-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 18px;
+            background: rgba(52, 73, 94, 0.6);
+            border-radius: 16px;
+        }
+
+        .current-profile-pic {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            object-fit: cover;
+            background: #333;
+        }
+        
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .color-picker-item label {
+            font-size: 11px;
+            color: #95a5a6;
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .color-picker-item input[type="color"] {
+            width: 100%;
+            height: 50px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+        
+        .gradient-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Scrollbar */
+        .settings-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .settings-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .settings-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="overlay"></div>
     
     <header>
-        <div><small style="color:#ccc;">Trading Performance</small><h2 id="display-name" style="margin:0;">Trader</h2></div>
-        <img src="" id="header-avatar" class="user-avatar">
+        <div>
+            <small style="color:#ccc;">Trading Performance</small>
+            <h2 id="display-name" style="margin:0;">Trader Kece</h2>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=User" id="header-avatar" class="user-avatar" onclick="openSettings()">
     </header>
 
     <div id="home" class="section active">
-        <div class="card" style="background: var(--accent-color); text-align: center;">
-            <small>Current Equity (Net)</small>
-            <h1 style="margin: 5px 0; font-size: 34px;">$ <span id="home-balance">0</span></h1>
-            <div id="home-growth" style="font-size: 12px; font-weight: bold; opacity: 0.9;">Growth: 0%</div>
+        <!-- Equity Card - VISA Style -->
+        <div class="equity-card" id="equityCard">
+            <div class="equity-edit">✏️</div>
+            <div class="equity-content">
+                <div class="equity-label">Current Equity (Net)</div>
+                <div class="equity-amount">$ <span id="home-balance">0</span></div>
+                <div class="equity-growth" id="home-growth">Growth: 0%</div>
+            </div>
         </div>
+        
         <div class="card">
             <span class="label-small"><i class="fas fa-chart-area"></i> Equity Curve</span>
             <div class="chart-container"><canvas id="equityChart"></canvas></div>
@@ -67,14 +597,23 @@
                 <strong id="total-trades" style="color: var(--accent-color); font-size: 16px;">0</strong>
             </div>
         </div>
+        
         <div class="stat-grid" style="margin-top: 15px;">
-            <div class="stat-box"><span class="label-small">Win Rate</span><div id="stat-wr" style="font-weight: 600; color: var(--win-color);">0%</div></div>
-            <div class="stat-box"><span class="label-small">Days Active</span><div id="stat-days" style="font-weight: 600;">0 Days</div></div>
+            <div class="stat-box">
+                <span class="label-small">Win Rate</span>
+                <div id="stat-wr" style="font-weight: 600; color: var(--win-color);">0%</div>
+            </div>
+            <div class="stat-box">
+                <span class="label-small">Days Active</span>
+                <div id="stat-days" style="font-weight: 600;">0 Days</div>
+            </div>
         </div>
+        
         <div class="card" style="margin-top: 15px;">
             <span class="label-small"><i class="fas fa-robot"></i> AI Psychology Insights</span>
-            <div id="ai-insight" class="ai-msg">Mulai catat trade lo.</div>
+            <div id="ai-insight" class="ai-msg">AI: Psikologi mantap!</div>
         </div>
+        
         <h4 style="margin: 20px 0 10px 5px;"><i class="fas fa-money-bill-wave"></i> Recent Withdrawals</h4>
         <div id="wd-summary-list" class="card"></div>
     </div>
@@ -84,8 +623,14 @@
         <div class="card">
             <input type="text" id="pair" placeholder="Pair (ex: BTC/USDT)">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <select id="side"><option value="BUY">BUY</option><option value="SELL">SELL</option></select>
-                <select id="result"><option value="win">WIN (+)</option><option value="loss">LOSS (-)</option></select>
+                <select id="side">
+                    <option value="BUY">BUY</option>
+                    <option value="SELL">SELL</option>
+                </select>
+                <select id="result">
+                    <option value="win">WIN (+)</option>
+                    <option value="loss">LOSS (-)</option>
+                </select>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <input type="number" id="pnl" placeholder="P&L Amount ($)">
@@ -106,8 +651,8 @@
         </div>
         <div id="trade-list"></div>
     </div>
-
-    <div id="journal" class="section">
+    
+<div id="journal" class="section">
         <h3><i class="fas fa-book"></i> Personal Journal</h3>
         <div class="card">
             <label class="label-small">Kategori:</label>
@@ -138,25 +683,59 @@
 
     <div id="settings" class="section">
         <h3>Settings</h3>
-        <div class="card" style="text-align: center;">
-            <img src="" id="preview-avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent-color); object-fit: cover;">
-            <input type="file" id="file-input" accept="image/*" onchange="previewImage(event)" style="display:none;">
-            <br><button onclick="document.getElementById('file-input').click()" style="background:none; border:1px solid var(--accent-color); color:var(--accent-color); padding:5px 12px; border-radius:8px; font-size:12px; margin: 10px 0 20px 0;">Ganti Foto</button>
-            
+        <div class="card">
             <input type="text" id="input-name" placeholder="Nama">
             <input type="number" id="input-capital" placeholder="Modal Awal ($)">
             
-            <div style="text-align: left;">
-                <label class="label-small">Warna Aksen</label>
-                <input type="color" id="color-accent" onchange="updateTheme()" style="height: 45px; width: 100%; border-radius: 12px; margin-bottom: 15px;">
-                
+            <div style="text-align: left; margin-top: 15px;">
                 <label class="label-small">Wallpaper Galeri</label>
                 <input type="file" id="bg-input" accept="image/*" onchange="previewBg(event)" style="display:none;">
                 <button onclick="document.getElementById('bg-input').click()" style="width:100%; padding:12px; background:rgba(255,255,255,0.1); border:1px solid #444; border-radius:12px; color:white; font-family:'Poppins'; margin-bottom:15px;"><i class="fas fa-image"></i> Pilih Wallpaper</button>
             </div>
 
             <button class="btn-primary" onclick="saveProfile()">Simpan Perubahan</button>
-            <button onclick="clearAllData()" style="background:none; border:none; color:var(--loss-color); font-size:11px; margin-top:20px;">Reset Semua</button>
+            <button onclick="clearAllData()" style="background:none; border:none; color:var(--loss-color); font-size:11px; margin-top:20px; cursor:pointer;">Reset Semua</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2 class="settings-title">Profile Settings</h2>
+                <button class="close-modal-btn" id="closeModalBtn">✕</button>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Profile Picture</label>
+                <div class="current-profile">
+                    <img src="https://ui-avatars.com/api/?name=User" id="modal-profile-pic" class="current-profile-pic">
+                    <div>
+                        <div style="font-size: 17px; font-weight: 600; margin-bottom: 4px;" id="modal-name">Trader</div>
+                        <div style="font-size: 13px; color: #95a5a6;">Click below to change</div>
+                    </div>
+                </div>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">Click to upload new photo</div>
+                    <input type="file" class="upload-input" id="uploadInput" accept="image/*">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Card Gradient Colors</label>
+                <div class="color-picker-group">
+                    <div class="color-picker-item">
+                        <label>Color 1</label>
+                        <input type="color" id="color-accent-1" value="#ff4b2b">
+                    </div>
+                    <div class="color-picker-item">
+                        <label>Color 2</label>
+                        <input type="color" id="color-accent-2" value="#ff416c">
+                    </div>
+                </div>
+                <div class="gradient-preview" id="gradientPreview"></div>
+            </div>
         </div>
     </div>
 
@@ -173,10 +752,22 @@
         let items = JSON.parse(localStorage.getItem('dreamItems')) || [];
         let withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
         let journals = JSON.parse(localStorage.getItem('journals')) || [];
-        let config = JSON.parse(localStorage.getItem('traderConfig')) || { name: "Trader", capital: 0, accent: "#ff4b2b", bgData: "", profilePic: "https://ui-avatars.com/api/?name=User" };
+        let config = JSON.parse(localStorage.getItem('traderConfig')) || { 
+            name: "Trader Kece", 
+            capital: 0, 
+            accent: "#ff4b2b",
+            accent2: "#ff416c",
+            bgData: "", 
+            profilePic: "https://ui-avatars.com/api/?name=User" 
+        };
         let myChart;
 
-        window.onload = () => { applyTheme(); loadFields(); updateUI(); };
+        window.onload = () => { 
+            applyTheme(); 
+            loadFields(); 
+            updateUI(); 
+            updateGradientPreview();
+        };
 
         function showTab(tabName, btn) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -188,41 +779,98 @@
 
         function applyTheme() {
             document.documentElement.style.setProperty('--accent-color', config.accent);
+            document.documentElement.style.setProperty('--accent-color-2', config.accent2);
             document.body.style.backgroundImage = config.bgData ? `url('${config.bgData}')` : 'none';
             document.getElementById('header-avatar').src = config.profilePic;
-            document.getElementById('preview-avatar').src = config.profilePic;
+            document.getElementById('modal-profile-pic').src = config.profilePic;
             document.getElementById('display-name').innerText = config.name;
+            document.getElementById('modal-name').innerText = config.name;
         }
 
-        function updateTheme() { config.accent = document.getElementById('color-accent').value; applyTheme(); }
-
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = () => { config.profilePic = reader.result; document.getElementById('preview-avatar').src = reader.result; };
-            reader.readAsDataURL(event.target.files[0]);
+        function updateGradientPreview() {
+            const color1 = document.getElementById('color-accent-1').value;
+            const color2 = document.getElementById('color-accent-2').value;
+            document.getElementById('gradientPreview').style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
         }
+
+        // Settings Modal Functions
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+            document.getElementById('color-accent-1').value = config.accent;
+            document.getElementById('color-accent-2').value = config.accent2;
+            updateGradientPreview();
+        }
+
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            document.getElementById('settingsModal').classList.remove('active');
+        });
+
+        document.getElementById('settingsModal').addEventListener('click', (e) => {
+            if (e.target.id === 'settingsModal') {
+                document.getElementById('settingsModal').classList.remove('active');
+            }
+        });
+
+        // Color pickers update preview
+        document.getElementById('color-accent-1').addEventListener('input', updateGradientPreview);
+        document.getElementById('color-accent-2').addEventListener('input', updateGradientPreview);
+
+        // Upload Photo
+        document.getElementById('uploadArea').addEventListener('click', () => {
+            document.getElementById('uploadInput').click();
+        });
+
+        document.getElementById('uploadInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    config.profilePic = event.target.result;
+                    document.getElementById('modal-profile-pic').src = event.target.result;
+                    document.getElementById('header-avatar').src = event.target.result;
+                    localStorage.setItem('traderConfig', JSON.stringify(config));
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Apply gradient colors from modal
+        document.getElementById('color-accent-1').addEventListener('change', () => {
+            config.accent = document.getElementById('color-accent-1').value;
+            localStorage.setItem('traderConfig', JSON.stringify(config));
+            applyTheme();
+            updateUI();
+        });
+
+        document.getElementById('color-accent-2').addEventListener('change', () => {
+            config.accent2 = document.getElementById('color-accent-2').value;
+            localStorage.setItem('traderConfig', JSON.stringify(config));
+            applyTheme();
+            updateUI();
+        });
 
         function previewBg(event) {
             const reader = new FileReader();
             reader.onload = () => { 
                 config.bgData = reader.result; 
                 document.body.style.backgroundImage = `url('${reader.result}')`; 
+                localStorage.setItem('traderConfig', JSON.stringify(config));
             };
             reader.readAsDataURL(event.target.files[0]);
         }
 
         function saveProfile() {
-            config.name = document.getElementById('input-name').value;
-            config.capital = parseFloat(document.getElementById('input-capital').value) || 0;
-            config.accent = document.getElementById('color-accent').value;
+            config.name = document.getElementById('input-name').value || config.name;
+            config.capital = parseFloat(document.getElementById('input-capital').value) || config.capital;
             localStorage.setItem('traderConfig', JSON.stringify(config));
-            applyTheme(); updateUI(); alert("Saved!");
+            applyTheme(); 
+            updateUI(); 
+            alert("Profile saved!");
         }
 
         function loadFields() {
             document.getElementById('input-name').value = config.name;
             document.getElementById('input-capital').value = config.capital;
-            document.getElementById('color-accent').value = config.accent;
         }
 
         function addTrade() {
@@ -232,13 +880,12 @@
             let screenshotData = document.getElementById('screenshot').value;
             const fileInput = document.getElementById('trade-screenshot');
             
-            // Cek apakah ada file yang diupload
             if(fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     screenshotData = e.target.result;
                     saveTrade(pair, pnl, screenshotData);
-                    fileInput.value = ''; // Clear file input
+                    fileInput.value = '';
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
@@ -263,7 +910,13 @@
             ['pair','pnl','rr','screenshot'].forEach(id => document.getElementById(id).value = '');
         }
 
-        function deleteTrade(id) { if(confirm("Hapus trade?")) { trades = trades.filter(t => t.id !== id); localStorage.setItem('trades', JSON.stringify(trades)); updateUI(); } }
+        function deleteTrade(id) { 
+            if(confirm("Hapus trade ini?")) { 
+                trades = trades.filter(t => t.id !== id); 
+                localStorage.setItem('trades', JSON.stringify(trades)); 
+                updateUI(); 
+            } 
+        }
 
         function addWithdrawal() {
             const amt = parseFloat(prompt("Jumlah WD ($):"));
@@ -354,7 +1007,9 @@
             let emotionLoss = { FOMO: 0, Takut: 0, Marah: 0, Tenang: 0 };
             let equityHistory = [config.capital];
             
-            const list = document.getElementById('trade-list'); list.innerHTML = '';
+            const list = document.getElementById('trade-list'); 
+            list.innerHTML = '';
+            
             const sortedTrades = [...trades].reverse();
             let currentEq = config.capital;
             sortedTrades.forEach(t => {
@@ -364,8 +1019,14 @@
 
             trades.forEach(t => {
                 const val = parseFloat(t.pnl);
-                if(t.result === 'win') { totalProfit += val; winCount++; }
-                else { totalProfit -= val; totalLossVal += val; emotionLoss[t.emotion]++; }
+                if(t.result === 'win') { 
+                    totalProfit += val; 
+                    winCount++; 
+                } else { 
+                    totalProfit -= val; 
+                    totalLossVal += val; 
+                    emotionLoss[t.emotion]++; 
+                }
                 
                 const screenshotHtml = t.ss ? `<img src="${t.ss}" class="vault-img" style="margin-top:10px;">` : '';
                 
@@ -394,7 +1055,6 @@
             document.getElementById('stat-wr').innerText = (trades.length ? Math.round((winCount/trades.length)*100) : 0) + "%";
             document.getElementById('total-trades').innerText = trades.length;
             
-            // Calculate days active
             if(trades.length > 0) {
                 const firstTradeDate = new Date(trades[trades.length - 1].date);
                 const today = new Date();
@@ -402,11 +1062,11 @@
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 document.getElementById('stat-days').innerText = `${diffDays} Day${diffDays !== 1 ? 's' : ''}`;
             } else {
-                document.getElementById('stat-days').innerText = '0 Days';
+            document.getElementById('stat-days').innerText = '0 Days';
             }
             
             let worst = Object.keys(emotionLoss).reduce((a, b) => emotionLoss[a] > emotionLoss[b] ? a : b);
-            document.getElementById('ai-insight').innerHTML = trades.length < 3 ? "Catat 3 trade." : (emotionLoss[worst] > 0 ? `AI: Loss terbanyak pas lagi **${worst}**.` : "AI: Psikologi mantap!");
+            document.getElementById('ai-insight').innerHTML = trades.length < 3 ? "Mulai catat trade lo." : (emotionLoss[worst] > 0 ? `AI: Loss terbanyak pas lagi <strong>${worst}</strong>. Control emosi lo!` : "AI: Psikologi mantap!");
 
             renderChart(equityHistory);
             renderItems(finalEq);
@@ -416,31 +1076,97 @@
         function renderChart(data) {
             const ctx = document.getElementById('equityChart').getContext('2d');
             if(myChart) myChart.destroy();
-            myChart = new Chart(ctx, { type: 'line', data: { labels: data.map((_, i) => i), datasets: [{ label: 'Equity', data: data, borderColor: config.accent, backgroundColor: 'rgba(255,75,43,0.1)', borderWidth: 2, tension: 0.3, fill: true, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', font: { size: 10 } } } } } });
-        }
-
-        function addItem() {
-            const name = document.getElementById('itemName').value, price = parseFloat(document.getElementById('itemPrice').value);
-            if(!name || isNaN(price)) return;
-            items.unshift({ id: Date.now(), name, img: document.getElementById('itemImage').value, price });
-            localStorage.setItem('dreamItems', JSON.stringify(items));
-            updateUI();
-        }
-
-        function renderItems(equity) {
-            const list = document.getElementById('dream-list'); list.innerHTML = '';
-            items.forEach(i => {
-                const p = Math.min(Math.max((equity / i.price) * 100, 0), 100);
-                list.innerHTML += `<div class="card" style="padding:0; overflow:hidden; position:relative;">
-                    <i class="fas fa-times-circle" onclick="deleteItem(${i.id})" style="position:absolute; top:5px; right:5px; z-index:10; cursor:pointer;"></i>
-                    <img src="${i.img || 'https://via.placeholder.com/150'}" style="width:100%; height:80px; object-fit:cover;">
-                    <div style="padding:10px;"><small style="font-size:10px;">${i.name}</small><br><strong>$${i.price.toLocaleString()}</strong>
-                    <div class="progress-container"><div class="progress-bar" style="width:${p}%; background:var(--accent-color);"></div></div></div></div>`;
+            myChart = new Chart(ctx, { 
+                type: 'line', 
+                data: { 
+                    labels: data.map((_, i) => i), 
+                    datasets: [{ 
+                        label: 'Equity', 
+                        data: data, 
+                        borderColor: config.accent, 
+                        backgroundColor: `${config.accent}20`, 
+                        borderWidth: 2, 
+                        tension: 0.3, 
+                        fill: true, 
+                        pointRadius: 0 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { display: false } 
+                    }, 
+                    scales: { 
+                        x: { display: false }, 
+                        y: { 
+                            grid: { color: 'rgba(255,255,255,0.05)' }, 
+                            ticks: { 
+                                color: '#888', 
+                                font: { size: 10 } 
+                            } 
+                        } 
+                    } 
+                } 
             });
         }
 
-        function deleteItem(id) { if(confirm("Hapus?")) { items = items.filter(i => i.id !== id); localStorage.setItem('dreamItems', JSON.stringify(items)); updateUI(); } }
-        function clearAllData() { if(confirm("Reset semua?")) { localStorage.clear(); location.reload(); } }
+        function addItem() {
+            const name = document.getElementById('itemName').value, 
+                  price = parseFloat(document.getElementById('itemPrice').value);
+            if(!name || isNaN(price)) return alert("Isi nama dan harga!");
+            items.unshift({ 
+                id: Date.now(), 
+                name, 
+                img: document.getElementById('itemImage').value, 
+                price 
+            });
+            localStorage.setItem('dreamItems', JSON.stringify(items));
+            updateUI();
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemImage').value = '';
+            document.getElementById('itemPrice').value = '';
+        }
+
+        function renderItems(equity) {
+            const list = document.getElementById('dream-list'); 
+            list.innerHTML = '';
+            items.forEach(i => {
+                const p = Math.min(Math.max((equity / i.price) * 100, 0), 100);
+                list.innerHTML += `<div class="card" style="padding:0; overflow:hidden; position:relative;">
+                    <i class="fas fa-times-circle" onclick="deleteItem(${i.id})" style="position:absolute; top:8px; right:8px; z-index:10; cursor:pointer; color:#fff; background:rgba(0,0,0,0.5); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:12px;"></i>
+                    <img src="${i.img || 'https://via.placeholder.com/150'}" style="width:100%; height:100px; object-fit:cover;">
+                    <div style="padding:12px;">
+                        <small style="font-size:11px; color:#aaa;">${i.name}</small><br>
+                        <strong style="font-size:16px;">$${i.price.toLocaleString()}</strong>
+                        <div class="progress-container" style="margin-top:8px;">
+                            <div class="progress-bar" style="width:${p}%; background:var(--accent-color);"></div>
+                        </div>
+                        <small style="font-size:10px; color:#888; display:block; margin-top:4px;">${p.toFixed(1)}% achieved</small>
+                    </div>
+                </div>`;
+            });
+            if(items.length === 0) {
+                list.innerHTML = '<div class="card" style="grid-column: 1 / -1; text-align:center; color:#666;"><i class="fas fa-bullseye" style="font-size:40px; margin-bottom:10px; opacity:0.3;"></i><p>Belum ada dream goals.<br>Tambahkan target lo!</p></div>';
+            }
+        }
+
+        function deleteItem(id) { 
+            if(confirm("Hapus dream goal ini?")) { 
+                items = items.filter(i => i.id !== id); 
+                localStorage.setItem('dreamItems', JSON.stringify(items)); 
+                updateUI(); 
+            } 
+        }
+        
+        function clearAllData() { 
+            if(confirm("Reset semua data? Ini tidak bisa dibatalkan!")) { 
+                if(confirm("Yakin 100%? Semua trade, journal, dan settings akan hilang!")) {
+                    localStorage.clear(); 
+                    location.reload(); 
+                }
+            } 
+        }
     </script>
 </body>
 </html>
