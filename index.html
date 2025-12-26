@@ -566,70 +566,172 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
         }
-        
-        .live-market-section {
-  margin: 18px 0 12px;
+        /* Live Price Section - TAMBAHKAN INI */
+.live-price-section {
+    margin-bottom: 20px;
 }
 
-.live-market-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #bbb;
-  margin-bottom: 10px;
+.live-price-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 5px;
 }
 
-.live-dot {
-  width: 8px;
-  height: 8px;
-  background: #00e676;
-  border-radius: 50%;
-  box-shadow: 0 0 6px #00e676;
+.live-price-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.live-indicator {
+    width: 8px;
+    height: 8px;
+    background: #00e676;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 8px #00e676;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
 }
 
 .refresh-btn {
-  margin-left: auto;
-  background: rgba(255,255,255,0.08);
-  border: none;
-  color: #aaa;
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.live-price-scroll {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
+.refresh-btn:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.15);
 }
 
-.live-price-scroll::-webkit-scrollbar {
-  display: none;
+.price-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin: 0 -20px;
+    padding: 0 20px;
+}
+
+.price-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.price-cards-wrapper {
+    display: flex;
+    gap: 12px;
+    padding: 5px 0;
 }
 
 .price-card {
-  min-width: 100px;
-  padding: 12px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  scroll-snap-align: start;
+    min-width: 140px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border-radius: 18px;
+    padding: 16px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+    cursor: pointer;
 }
 
-.price-card small {
-  font-size: 11px;
-  color: #aaa;
+.price-card:active {
+    transform: scale(0.97);
 }
 
-.price-card strong {
-  font-size: 17px;
+.price-card.loading {
+    border-left: 3px solid rgba(255, 255, 255, 0.3);
 }
 
-.up { color: var(--win-color); }
-.down { color: var(--loss-color); }
+.price-pair-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #aaa;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
+.price-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.price-change {
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.price-change.up {
+    color: var(--win-color);
+}
+
+.price-change.down {
+    color: var(--loss-color);
+}
+
+.price-time {
+    font-size: 9px;
+    color: #666;
+    margin-top: 6px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Session Badge */
+.session-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 6px;
+}
+
+.session-asia {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.session-london {
+    background: rgba(33, 150, 243, 0.2);
+    color: #2196F3;
+    border: 1px solid rgba(33, 150, 243, 0.3);
+}
+
+.session-newyork {
+    background: rgba(156, 39, 176, 0.2);
+    color: #9C27B0;
+    border: 1px solid rgba(156, 39, 176, 0.3);
+}
     </style>
 </head>
 <body>
@@ -652,35 +754,60 @@
                 <div class="equity-amount">$ <span id="home-balance">0</span></div>
                 <div class="equity-growth" id="home-growth">Growth: 0%</div>
             </div>
+            
             </div> <!-- equity-card -->
-
-<!-- Live Market Section -->
-<div class="live-market-section">
-  <div class="live-market-header">
-    <span class="live-dot"></span>
-    <span>Live Market</span>
-    <button class="refresh-btn">Refresh</button>
-  </div>
-
-  <div class="live-price-scroll">
-    <div class="price-card">
-    <small>XAUUSD</small>
-    <strong class="up" id="xau-price">Loading...</strong> 
+<!-- Live Price Section --><!-- Live Price Section - NEW DESIGN -->
+<div class="live-price-section">
+    <div class="live-price-header">
+        <div class="live-price-title">
+            <div class="live-indicator"></div>
+            <span>Live Market</span>
+        </div>
+        <button class="refresh-btn" onclick="manualRefreshPrices()">
+                        <i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh
+        </button>
     </div>
-    <div class="price-card">
-    <small>BTCUSD</small>
-    <strong class="up" id="btc-price">Loading...</strong> 
+    <div class="price-scroll-container">
+        <div class="price-cards-wrapper">
+          <!-- XAU/USD Card -->
+            <div class="price-card loading">
+                <div class="price-pair-name">XAU/USD</div>
+                <div class="price-value">$<span id="xau-price">Loading...</span></div>
+                <div class="price-change" id="xau-change">
+                    <span>▲</span>
+                    <span>0.00%</span>
+                </div>
+                <div class="price-time">Real-time</div>
+            </div>
+            <!-- BTC/USD Card -->
+            <div class="price-card loading">
+                <div class="price-pair-name">BTC/USD</div>
+                <div class="price-value">$<span id="btc-price">Loading...</span></div>
+                <div class="price-change" id="btc-change">
+                    <span>▲</span>
+                    <span>0.00%</span>
+                </div>
+                <div class="price-time">Real-time</div>
+            </div>
+            <div class="price-card loading">
+                <div class="price-pair-name">US30</div>
+                <div class="price-value"><span id="us30-price">Loading...</span></div>
+                <div class="price-change" id="us30-change">
+                    <span>▲</span><span>0.00%</span>
+                </div>
+                <div class="price-time">Dow Jones</div>
+            </div>
+            <div class="price-card loading">
+                <div class="price-pair-name">US100</div>
+                <div class="price-value"><span id="us100-price">Loading...</span></div>
+                <div class="price-change" id="us100-change">
+                    <span>▲</span><span>0.00%</span>
+                </div>
+                <div class="price-time">Nasdaq</div>
+            </div>
+        </div>
     </div>
-    <div class="price-card">
-    <small>US30 (Dow Jones)</small>
-    <strong class="up" id="us30-price">Loading...</strong>
-    </div>
-    <div class="price-card">
-    <small>US100 (Nasdaq)</small>
-    <strong class="up" id="us100-price">Loading...</strong>
-    </div>
-  </div>
-</div>
+</div> <!-- live-price-section -->
 
         
         <div class="card">
@@ -714,7 +841,7 @@
             <div id="ai-insight" class="ai-msg">AI: Psikologi mantap!</div>
         </div>
         
-                <h4 style="margin: 20px 0 10px 5px;"><i class="fas fa-money-bill-wave"></i> Recent Withdrawals</h4>
+        <h4 style="margin: 20px 0 10px 5px;"><i class="fas fa-money-bill-wave"></i> Recent Withdrawals</h4>
         <div id="wd-summary-list" class="card"></div>
     </div>
 
@@ -871,24 +998,42 @@
         <button class="nav-btn" onclick="showTab('journal', this)"><i class="fas fa-book"></i></button>
         <button class="nav-btn" onclick="showTab('saving', this)"><i class="fas fa-wallet"></i></button>
         <button class="nav-btn" onclick="showTab('settings', this)"><i class="fas fa-cog"></i></button>
-    </nav>
+            </nav>
 
     <script>
-        let trades = JSON.parse(localStorage.getItem('trades')) || [];
-        let items = JSON.parse(localStorage.getItem('dreamItems')) || [];
-        let withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
-        let journals = JSON.parse(localStorage.getItem('journals')) || [];
-        let config = JSON.parse(localStorage.getItem('traderConfig')) || { 
-            name: "Trader Kece", 
-            capital: 0, 
-            accent: "#ff4b2b",
-            accent2: "#ff416c",
-            bgData: "", 
-            profilePic: "https://ui-avatars.com/api/?name=User" 
-        };
-        let myChart;
+      const APP_VERSION = "1.0.1"; // ganti tiap admin update
+      function checkAppVersion() {
+    const savedVersion = localStorage.getItem("appVersion");
 
-        window.onload = () => { 
+    if (savedVersion !== APP_VERSION) {
+        alert(
+            "⚠️ Web kamu belum update.\n\n" +
+            "Kalau fitur tidak muncul:\n" +
+            "• Refresh halaman\n" +
+            "• Clear cache browser\n\n" +
+            "Versi baru akan aktif setelah itu."
+        );
+
+        localStorage.setItem("appVersion", APP_VERSION);
+    }
+}
+      let trades = JSON.parse(localStorage.getItem('trades')) || [];
+      let items = JSON.parse(localStorage.getItem('dreamItems')) || [];
+      let withdrawals = JSON.parse(localStorage.getItem('withdrawals')) || [];
+      let journals = JSON.parse(localStorage.getItem('journals')) || [];
+      let config = JSON.parse(localStorage.getItem('traderConfig')) || {
+    name: "Trader Kece",
+    capital: 0,
+    accent: "#ff4b2b",
+    accent2: "#ff416c",
+    bgData: "",
+    profilePic: "https://ui-avatars.com/api/?name=User"
+};
+      let myChart;
+      let previousPrices = { xau: null, btc: null, us30: null, us100: null }; // TAMBAH INI
+
+        window.onload = function () {
+    checkAppVersion();
           
           // Cek izin notifikasi saat aplikasi dibuka
 if ("Notification" in window) {
@@ -912,13 +1057,14 @@ function checkReminder() {
 
 // Jalankan reminder 5 detik setelah buka aplikasi
 setTimeout(checkReminder, 5000);
-          
-            applyTheme(); 
-            loadFields(); 
-            updateUI(); 
-            updateGradientPreview();
-        };
 
+          applyTheme(); 
+          loadFields(); 
+          updateUI(); 
+          updateGradientPreview();
+          initLivePrices(); // TAMBAH BARIS INI
+          };
+            
         function showTab(tabName, btn) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -1042,24 +1188,40 @@ setTimeout(checkReminder, 5000);
                 saveTrade(pair, pnl, screenshotData);
             }
         }
-        
         function saveTrade(pair, pnl, screenshotData) {
-            trades.unshift({ 
-                id: Date.now(), 
-                pair: pair.toUpperCase(), 
-                side: document.getElementById('side').value, 
-                result: document.getElementById('result').value, 
-                pnl, 
-                rr: document.getElementById('rr').value || "0", 
-                emotion: document.getElementById('emotion').value, 
-                ss: screenshotData, 
-                date: new Date().toISOString() 
-            });
-            localStorage.setItem('trades', JSON.stringify(trades));
-            updateUI();
-            ['pair','pnl','rr','screenshot'].forEach(id => document.getElementById(id).value = '');
-        }
-
+    // Detect trading session berdasarkan waktu
+    const now = new Date();
+    const hour = now.getHours(); // Jam sekarang (0-23)
+    
+    let session = '';
+    if (hour >= 0 && hour < 9) {
+        session = 'Asia'; // 00:00 - 09:00
+    } else if (hour >= 9 && hour < 17) {
+        session = 'London'; // 09:00 - 17:00
+    } else {
+        session = 'New York'; // 17:00 - 24:00
+    }
+    
+    trades.unshift({ 
+        id: Date.now(), 
+        pair: pair.toUpperCase(), 
+        side: document.getElementById('side').value, 
+        result: document.getElementById('result').value, 
+        pnl, 
+        rr: document.getElementById('rr').value || "0", 
+        emotion: document.getElementById('emotion').value, 
+        session: session, // TAMBAH INI
+        ss: screenshotData, 
+        date: new Date().toISOString() 
+    });
+    localStorage.setItem('trades', JSON.stringify(trades));
+    updateUI();
+    ['pair','pnl','rr','screenshot'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('side').value = 'BUY';
+    document.getElementById('result').value = 'win';
+    document.getElementById('emotion').value = 'Tenang';
+}
+        
         function deleteTrade(id) { 
             if(confirm("Hapus trade ini?")) { 
                 trades = trades.filter(t => t.id !== id); 
@@ -1136,7 +1298,7 @@ setTimeout(checkReminder, 5000);
             if(journals.length === 0) {
                 list.innerHTML = '<div class="card" style="text-align:center; color:#666;"><i class="fas fa-book-open" style="font-size:40px; margin-bottom:10px; opacity:0.3;"></i><p>Belum ada journal entry.<br>Mulai catat kesalahan & pelajaran lo!</p></div>';
                 return;
-            }
+                          }
             
             journals.forEach(j => {
                 list.innerHTML += `<div class="card journal-entry">
@@ -1179,6 +1341,27 @@ if (trades.length > 0) {
     const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     let bestDayIdx = Object.keys(dayData).reduce((a, b) => dayData[a] > dayData[b] ? a : b);
     document.getElementById('time-stats').innerHTML = `📅 Best Day: <b>${days[bestDayIdx]}</b> (Most Wins)`;
+    // Analisis per Session
+let sessionData = { Asia: {win: 0, total: 0}, London: {win: 0, total: 0}, 'New York': {win: 0, total: 0} };
+trades.forEach(t => {
+    if(t.session) {
+        if(!sessionData[t.session]) sessionData[t.session] = {win: 0, total: 0};
+        sessionData[t.session].total++;
+        if(t.result === 'win') sessionData[t.session].win++;
+    }
+});
+
+// Cari session terbaik
+let bestSession = Object.keys(sessionData).reduce((a, b) => {
+    let wrA = sessionData[a].total > 0 ? (sessionData[a].win / sessionData[a].total) : 0;
+    let wrB = sessionData[b].total > 0 ? (sessionData[b].win / sessionData[b].total) : 0;
+    return wrA > wrB ? a : b;
+});
+
+let wrSession = sessionData[bestSession].total > 0 ? 
+    Math.round((sessionData[bestSession].win / sessionData[bestSession].total) * 100) : 0;
+
+document.getElementById('time-stats').innerHTML += `<br>⏰ Best Session: <b>${bestSession}</b> (WR: ${wrSession}%)`;
 }
           
             let totalProfit = 0, winCount = 0, totalLossVal = 0;
@@ -1207,14 +1390,23 @@ if (trades.length > 0) {
                 }
                 
                 const screenshotHtml = t.ss ? `<img src="${t.ss}" class="vault-img" style="margin-top:10px;">` : '';
-                
                 list.innerHTML += `<div class="card" style="border-left: 4px solid ${t.result==='win'?'var(--win-color)':'var(--loss-color)'}">
-                    <div class="history-item">
-                        <div><strong style="color:${t.side==='BUY'?'var(--win-color)':'var(--loss-color)'}">${t.side}</strong> <strong>${t.pair}</strong><br><small style="color:#aaa;">RR: ${t.rr} | ${t.emotion}</small></div>
-                        <div style="display:flex; align-items:center;"><span style="color:${t.result==='win'?'var(--win-color)':'var(--loss-color)'}; font-weight:bold; margin-right:10px;">${t.result==='win'?'+':'-'}$${val}</span><i class="fas fa-trash-alt del-btn" onclick="deleteTrade(${t.id})"></i></div>
-                    </div>
-                    ${screenshotHtml}
-                </div>`;
+    <div class="history-item">
+        <div>
+            <strong style="color:${t.side==='BUY'?'var(--win-color)':'var(--loss-color)'}">${t.side}</strong> 
+            <strong>${t.pair}</strong>
+            <span class="session-badge session-${t.session ? t.session.toLowerCase().replace(' ', '') : 'asia'}">${t.session || 'Asia'}</span>
+            <br>
+            <small style="color:#aaa;">RR: ${t.rr} | ${t.emotion}</small>
+        </div>
+        <div style="display:flex; align-items:center;">
+            <span style="color:${t.result==='win'?'var(--win-color)':'var(--loss-color)'}; font-weight:bold; margin-right:10px;">${t.result==='win'?'+':'-'}$${val}</span>
+            <i class="fas fa-trash-alt del-btn" onclick="deleteTrade(${t.id})"></i>
+        </div>
+    </div>
+    ${screenshotHtml}
+</div>`;
+
             });
 
             const wdList = document.getElementById('wd-summary-list');
@@ -1377,126 +1569,93 @@ function importData(event) {
     };
     reader.readAsText(event.target.files[0]);
         }
-        function connectBinancePrice() {
-    // Kita panggil data BTCUSDT (Binance pake USDT bukan USD)
-    const socket = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
-
-    socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        const price = parseFloat(data.c).toFixed(2); // Ambil harga terakhir
-        const priceElement = document.getElementById('btc-price');
-
-        if (priceElement) {
-            const oldPrice = parseFloat(priceElement.innerText.replace(',', ''));
-            priceElement.innerText = price;
-
-            // Logika ganti warna otomatis sesuai UI lo
-            if (parseFloat(price) > oldPrice) {
-                priceElement.className = "up"; // Warna hijau (sesuai CSS lo)
-            } else if (parseFloat(price) < oldPrice) {
-                priceElement.className = "down"; // Warna merah (sesuai CSS lo)
-            }
-        }
-    };
-
-    socket.onclose = () => {
-        setTimeout(connectBinancePrice, 5000); // Konek ulang kalau internet putus
-    };
-}
-// Jalankan mesinnya!
-connectBinancePrice();
-
-
-async function updateGoldPrice() {
-    const xauElement = document.getElementById('xau-price');
-    try {
-        // Pake API alternatif yang lebih ringan
-        const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
-        const data = await response.json();
+        // LIVE PRICE FUNCTIONS - TEMPEL DI PALING BAWAH
+function updatePriceCard(id, price, previousPrice) {
+    const priceElement = document.getElementById(id + '-price');
+    const changeElement = document.getElementById(id + '-change');
+    const card = priceElement.closest('.price-card');
+    
+    if (priceElement) {
+        const formattedPrice = typeof price === 'number' ? price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : price;
+        priceElement.textContent = formattedPrice;
+        card.classList.remove('loading');
         
-        if (data && data.price) {
-            // Kita kasih koreksi harga sedikit biar deket ke TradingView (dikurangin selisihnya)
-            // Misal selisihnya tadi sekitar 16 dollar, kita potong otomatis
-            const rawPrice = parseFloat(data.price);
-            const adjustedPrice = (rawPrice - 16.50).toFixed(2); 
-            
-            xauElement.innerText = adjustedPrice;
+        if (previousPrice !== null && price !== previousPrice) {
+            const isUp = price > previousPrice;
+            changeElement.className = 'price-change ' + (isUp ? 'up' : 'down');
+            changeElement.innerHTML = `<span>${isUp ? '▲' : '▼'}</span><span>${Math.abs(((price - previousPrice) / previousPrice) * 100).toFixed(2)}%</span>`;
         }
-    } catch (error) {
-        console.log("Error Gold API:", error);
-        // Kalau error, kasih angka statis dulu biar gak keliatan bug
-        if(xauElement.innerText === "Loading...") xauElement.innerText = "2645.50";
     }
 }
 
-// Update tiap 5 detik biar lebih responsif
-setInterval(updateGoldPrice, 5000);
-updateGoldPrice();
+function connectBTCPrice() {
+    const socket = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const price = parseFloat(data.c);
+        updatePriceCard('btc', price, previousPrices.btc);
+        previousPrices.btc = price;
+    };
+    socket.onerror = () => setTimeout(connectBTCPrice, 5000);
+    socket.onclose = () => setTimeout(connectBTCPrice, 5000);
+}
 
+async function updateGoldPrice() {
+    try {
+        const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
+        const data = await response.json();
+        if (data && data.price) {
+            const rawPrice = parseFloat(data.price);
+            const adjustedPrice = rawPrice - 16.50;
+            updatePriceCard('xau', adjustedPrice, previousPrices.xau);
+            previousPrices.xau = adjustedPrice;
+        }
+    } catch (error) {
+        console.log("Gold API error:", error);
+    }
+}
 
 async function updateIndexPrices() {
     try {
-        // Kita ambil data dari provider public market data
         const response = await fetch('https://query1.finance.yahoo.com/v7/finance/quote?symbols=^DJI,^IXIC');
         const data = await response.json();
-        
         const results = data.quoteResponse.result;
-        
         results.forEach(item => {
-            if (item.symbol === '^DJI') { // Dow Jones / US30
-                const el = document.getElementById('us30-price');
-                if(el) el.innerText = parseFloat(item.regularMarketPrice).toFixed(2);
+            if (item.symbol === '^DJI') {
+                const price = parseFloat(item.regularMarketPrice);
+                updatePriceCard('us30', price, previousPrices.us30);
+                previousPrices.us30 = price;
             }
-            if (item.symbol === '^IXIC') { // Nasdaq / US100
-                const el = document.getElementById('us100-price');
-                if(el) el.innerText = parseFloat(item.regularMarketPrice).toFixed(2);
+            if (item.symbol === '^IXIC') {
+                const price = parseFloat(item.regularMarketPrice);
+                updatePriceCard('us100', price, previousPrices.us100);
+                previousPrices.us100 = price;
             }
         });
     } catch (error) {
-        console.log("Index API Error:", error);
-        // Backup data statis biar gak kosong pas market tutup
-        if(!document.getElementById('us30-price').innerText.includes('.')) {
-            document.getElementById('us30-price').innerText = "44750.20";
-            document.getElementById('us100-price').innerText = "21120.50";
+        console.log("Index API error:", error);
+        if (document.getElementById('us30-price').textContent === 'Loading...') {
+            document.getElementById('us30-price').textContent = '44,750.20';
+            document.getElementById('us100-price').textContent = '21,120.50';
         }
     }
 }
 
-// Update tiap 1 menit (karena Index geraknya gak se-agresif Crypto di data public)
-setInterval(updateIndexPrices, 60000);
-updateIndexPrices();
-
-
-// MODUL UPDATE HARGA - TARUH PALING BAWAH
-async function refreshMarketPrices() {
-    try {
-        // 1. UPDATE BTC (Ambil harga real dari Binance)
-        const resBtc = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
-        const dataBtc = await resBtc.json();
-        const btcEl = document.getElementById('btc-price');
-        if(btcEl) btcEl.innerText = parseFloat(dataBtc.price).toLocaleString();
-
-        // 2. UPDATE XAU (Emas) - Pake PAXG Binance dikurang selisih
-        const resXau = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
-        const dataXau = await resXau.json();
-        const xauEl = document.getElementById('xau-price');
-        if(xauEl) xauEl.innerText = (parseFloat(dataXau.price) - 16.50).toFixed(2);
-
-        // 3. UPDATE INDEX (Manual karena Market US Libur)
-        const us30El = document.getElementById('us30-price');
-        const us100El = document.getElementById('us100-price');
-        if(us30El) us30El.innerText = "44,750.20"; // Harga penutupan
-        if(us100El) us100El.innerText = "21,120.50"; // Harga penutupan
-
-    } catch (err) {
-        console.log("Market tutup atau koneksi sibuk");
-    }
+function initLivePrices() {
+    connectBTCPrice();
+    updateGoldPrice();
+    setInterval(updateGoldPrice, 5000);
+    updateIndexPrices();
+    setInterval(updateIndexPrices, 60000);
 }
 
-// Jalankan tiap 5 detik
-setInterval(refreshMarketPrices, 5000);
-refreshMarketPrices();
-
+function manualRefreshPrices() {
+    const icon = document.getElementById('refreshIcon');
+    icon.style.animation = 'spin 0.5s linear';
+    updateGoldPrice();
+    updateIndexPrices();
+    setTimeout(() => { icon.style.animation = ''; }, 500);
+}
     </script>
 </body>
 </html>
